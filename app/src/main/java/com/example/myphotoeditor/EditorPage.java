@@ -26,7 +26,7 @@ public class EditorPage extends AppCompatActivity {
 
     private ImageView Image;
     private ActionBar actionBar;
-    private float xDown = 0, yDown = 0, init_x = 0, init_y = 0;
+    private float yDown = 0, init_x = 0, init_y = 0;
     private int counter = 0;
 
     @SuppressLint("ClickableViewAccessibility")
@@ -37,6 +37,7 @@ public class EditorPage extends AppCompatActivity {
         supportPostponeEnterTransition();
 
         actionBar = getSupportActionBar();
+        assert actionBar != null;
         actionBar.setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.special_transparent, getApplicationContext().getTheme())));
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.hide();
@@ -53,7 +54,6 @@ public class EditorPage extends AppCompatActivity {
         load(setTransition());
 
         setTouchListeners();
-
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -70,18 +70,15 @@ public class EditorPage extends AppCompatActivity {
             switch (event.getActionMasked()) {
                 case MotionEvent.ACTION_DOWN: {
                     changeActionBarPosition(event);
-                    xDown = event.getX();
                     yDown = event.getY();
                     break;
                 }
                 case MotionEvent.ACTION_MOVE: {
-                    float xMoved = event.getX();
                     float yMoved = event.getY();
 
-                    float distanceX = xMoved - xDown;
                     float distanceY = yMoved - yDown;
 
-                    Image.setX(Image.getX() + distanceX);
+                    Image.setX(Image.getX());
                     Image.setY(Image.getY() + distanceY);
 
                     break;

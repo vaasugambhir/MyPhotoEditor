@@ -19,6 +19,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -64,16 +65,7 @@ public class MainActivity extends AppCompatActivity {
         if (ActivityCompat.checkSelfPermission(MainActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
             int PERMISSION_CODE = 100;
             ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE}, PERMISSION_CODE);
-            onResume();
         }
-    }
-
-    @RequiresApi(api = Build.VERSION_CODES.Q)
-    @Override
-    protected void onResume() {
-        super.onResume();
-        fetchingData();
-        setAdapter();
     }
 
     @RequiresApi(api = Build.VERSION_CODES.Q)
@@ -97,7 +89,7 @@ public class MainActivity extends AppCompatActivity {
             Intent intent = new Intent(MainActivity.this, EditorPage.class);
             ActivityOptionsCompat optionsCompat = ActivityOptionsCompat
                     .makeSceneTransitionAnimation(MainActivity.this,
-                            image, ViewCompat.getTransitionName(image));
+                            image, Objects.requireNonNull(ViewCompat.getTransitionName(image)));
             intent.putExtra(IMAGE_TRANSITION_NAME, ViewCompat.getTransitionName(image));
             intent.putExtra(IMAGE_PATH, path);
             intent.putExtra(IMAGE_NAME, name);
