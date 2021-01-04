@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">My Photo Editor</string>
+    <string name="editable_image_content_description">EDITABLE_IMAGE</string>
 </resources>
