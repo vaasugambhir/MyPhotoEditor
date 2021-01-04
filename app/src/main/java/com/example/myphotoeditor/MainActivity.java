@@ -59,11 +59,21 @@ public class MainActivity extends AppCompatActivity {
         setAdapter();
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.Q)
     private void permissions() {
         if (ActivityCompat.checkSelfPermission(MainActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
             int PERMISSION_CODE = 100;
             ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE}, PERMISSION_CODE);
+            onResume();
         }
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.Q)
+    @Override
+    protected void onResume() {
+        super.onResume();
+        fetchingData();
+        setAdapter();
     }
 
     @RequiresApi(api = Build.VERSION_CODES.Q)
