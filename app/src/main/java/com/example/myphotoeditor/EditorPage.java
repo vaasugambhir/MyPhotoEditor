@@ -36,6 +36,9 @@ public class EditorPage extends AppCompatActivity {
         setContentView(R.layout.activity_editor_page);
         supportPostponeEnterTransition();
 
+        getWindow().getSharedElementEnterTransition().setDuration(Constants.TRANSITION_DURATION);
+        getWindow().getSharedElementReturnTransition().setDuration(Constants.TRANSITION_DURATION);
+
         actionBar = getSupportActionBar();
         assert actionBar != null;
         actionBar.setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.special_transparent, getApplicationContext().getTheme())));
@@ -87,7 +90,7 @@ public class EditorPage extends AppCompatActivity {
                     float final_y = Image.getY();
                     System.out.println(final_y-init_y);
 
-                    if (Math.abs(final_y - init_y) > 750f) {
+                    if (Math.abs(final_y - init_y) > Constants.EXIT_DISTANCE) {
                         finishAfterTransition();
                     }
                     else {
@@ -143,9 +146,9 @@ public class EditorPage extends AppCompatActivity {
 
     private String[] setTransition() {
         Image = findViewById(R.id.imageView_Image);
-        String transitionName = getIntent().getExtras().getString(MainActivity.IMAGE_TRANSITION_NAME);
-        String path = getIntent().getExtras().getString(MainActivity.IMAGE_PATH);
-        String name = getIntent().getExtras().getString(MainActivity.IMAGE_NAME);
+        String transitionName = getIntent().getExtras().getString(Constants.IMAGE_TRANSITION_NAME);
+        String path = getIntent().getExtras().getString(Constants.IMAGE_PATH);
+        String name = getIntent().getExtras().getString(Constants.IMAGE_NAME);
         ViewCompat.setTransitionName(Image, transitionName);
         return new String[]{path, name};
     }

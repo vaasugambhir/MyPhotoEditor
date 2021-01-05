@@ -27,10 +27,6 @@ public class MainActivity extends AppCompatActivity {
     private RecyclerView mImageList;
     private ArrayList<String> mFilePaths, mFileNames;
 
-    public static String IMAGE_TRANSITION_NAME = "TRANSITION_NAME";
-    public static String IMAGE_PATH = "PATH";
-    public static String IMAGE_NAME = "NAME";
-
     @RequiresApi(api = Build.VERSION_CODES.Q)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +38,8 @@ public class MainActivity extends AppCompatActivity {
         toolbar.setTitle("Choose a picture");
         setSupportActionBar(toolbar);
 
+        getWindow().getSharedElementEnterTransition().setDuration(Constants.TRANSITION_DURATION);
+        getWindow().getSharedElementReturnTransition().setDuration(Constants.TRANSITION_DURATION);
 
         Fade fade = new Fade();
         View decor = getWindow().getDecorView();
@@ -90,9 +88,9 @@ public class MainActivity extends AppCompatActivity {
             ActivityOptionsCompat optionsCompat = ActivityOptionsCompat
                     .makeSceneTransitionAnimation(MainActivity.this,
                             image, Objects.requireNonNull(ViewCompat.getTransitionName(image)));
-            intent.putExtra(IMAGE_TRANSITION_NAME, ViewCompat.getTransitionName(image));
-            intent.putExtra(IMAGE_PATH, path);
-            intent.putExtra(IMAGE_NAME, name);
+            intent.putExtra(Constants.IMAGE_TRANSITION_NAME, ViewCompat.getTransitionName(image));
+            intent.putExtra(Constants.IMAGE_PATH, path);
+            intent.putExtra(Constants.IMAGE_NAME, name);
             startActivity(intent, optionsCompat.toBundle());
         });
         mImageList.setAdapter(adapter);
