@@ -20,6 +20,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.Target;
 
 public class EditorPage extends AppCompatActivity {
@@ -121,6 +122,7 @@ public class EditorPage extends AppCompatActivity {
         String path = info[0];
         String name = info[1];
         actionBar.setTitle(name);
+        Image.setScaleType(ImageView.ScaleType.FIT_CENTER);
         Glide.with(this)
                 .load(path)
                 .dontAnimate()
