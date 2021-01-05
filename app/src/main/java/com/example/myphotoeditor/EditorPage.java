@@ -43,7 +43,6 @@ public class EditorPage extends AppCompatActivity {
         assert actionBar != null;
         actionBar.setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.special_transparent, getApplicationContext().getTheme())));
         actionBar.setDisplayHomeAsUpEnabled(true);
-        actionBar.hide();
 
         Fade fade = new Fade();
         View decor = getWindow().getDecorView();
@@ -63,6 +62,8 @@ public class EditorPage extends AppCompatActivity {
     private void setTouchListeners() {
         Image.setOnTouchListener((v, event) -> {
 
+            changeActionBarPosition(event);
+
             if (counter == 0) {
                 init_x = Image.getX();
                 init_y = Image.getY();
@@ -72,7 +73,6 @@ public class EditorPage extends AppCompatActivity {
 
             switch (event.getActionMasked()) {
                 case MotionEvent.ACTION_DOWN: {
-                    changeActionBarPosition(event);
                     yDown = event.getY();
                     break;
                 }
