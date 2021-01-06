@@ -42,11 +42,8 @@ public class MainActivity extends AppCompatActivity {
         getWindow().getSharedElementReturnTransition().setDuration(Constants.TRANSITION_DURATION);
 
         Fade fade = new Fade();
-        View decor = getWindow().getDecorView();
-        fade.excludeTarget(decor.findViewById(R.id.action_bar_container), true);
         fade.excludeTarget(android.R.id.statusBarBackground, true);
         fade.excludeTarget(android.R.id.navigationBarBackground, true);
-
         getWindow().setEnterTransition(fade);
         getWindow().setExitTransition(fade);
 
