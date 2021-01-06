@@ -18,7 +18,7 @@ import java.util.ArrayList;
 public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ImageViewHolder> {
 
     public interface OnImageClickListener {
-        void onImageClick(ImageView image, String path, String name);
+        void onImageClick(ImageView image, String path, String name, int pos);
     }
 
     private ArrayList<String> mFilePaths;
@@ -59,7 +59,7 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ImageViewHol
         holder.image.setOnClickListener(v -> {
             String path = mFilePaths.get(position);
             String name = mFileNames.get(position);
-            listener.onImageClick(holder.image, path, name);
+            listener.onImageClick(holder.image, path, name, position);
         });
 
         Glide.with(context)

@@ -24,7 +24,9 @@ public class MainActivity extends AppCompatActivity {
 
     private TextView mImageCount;
     private RecyclerView mImageList;
-    private ArrayList<String> mFilePaths, mFileNames;
+
+    public static int position = 0;
+    private static ArrayList<String> mFilePaths, mFileNames;
 
     @RequiresApi(api = Build.VERSION_CODES.Q)
     @Override
@@ -79,7 +81,7 @@ public class MainActivity extends AppCompatActivity {
     private void setAdapter() {
         ImageAdapter adapter = new ImageAdapter(this);
         adapter.add(mFilePaths, mFileNames);
-        adapter.addOnClickListener((image, path, name) -> {
+        adapter.addOnClickListener((image, path, name, pos) -> {
             Intent intent = new Intent(MainActivity.this, EditorPage.class);
             ActivityOptionsCompat optionsCompat = ActivityOptionsCompat
                     .makeSceneTransitionAnimation(MainActivity.this,
@@ -87,9 +89,18 @@ public class MainActivity extends AppCompatActivity {
             intent.putExtra(Constants.IMAGE_TRANSITION_NAME, ViewCompat.getTransitionName(image));
             intent.putExtra(Constants.IMAGE_PATH, path);
             intent.putExtra(Constants.IMAGE_NAME, name);
+            position = pos;
             startActivity(intent, optionsCompat.toBundle());
         });
         mImageList.setAdapter(adapter);
         mImageList.setLayoutManager(new GridLayoutManager(this, 4));
+    }
+
+    public static ArrayList<String> getFileNames() {
+        return mFileNames;
+    }
+
+    public static ArrayList<String> getFilePaths() {
+        return mFilePaths;
     }
 }

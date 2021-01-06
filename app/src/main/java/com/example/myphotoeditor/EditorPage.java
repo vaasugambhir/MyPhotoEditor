@@ -1,35 +1,22 @@
 package com.example.myphotoeditor;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.view.ViewCompat;
+import androidx.viewpager.widget.ViewPager;
 
 import android.annotation.SuppressLint;
 import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.transition.Fade;
-import android.view.GestureDetector;
 import android.view.MenuItem;
-import android.view.MotionEvent;
-import android.view.View;
-import android.widget.ImageView;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.DataSource;
-import com.bumptech.glide.load.engine.GlideException;
-import com.bumptech.glide.request.RequestListener;
-import com.bumptech.glide.request.target.Target;
+import java.util.ArrayList;
 
-public class EditorPage extends AppCompatActivity implements View.OnTouchListener, GestureDetector.OnDoubleTapListener, GestureDetector.OnGestureListener {
+public class EditorPage extends AppCompatActivity {
 
-    private ImageView Image;
-    private ActionBar actionBar;
-    private float yDown = 0, init_x = 0, init_y = 0;
-    private int counter = 0;
-    private GestureDetector mGestureDetector;
+    private static ActionBar actionBar;
+    private ArrayList<String> mFileNames;
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
@@ -38,10 +25,10 @@ public class EditorPage extends AppCompatActivity implements View.OnTouchListene
         setContentView(R.layout.activity_editor_page);
         supportPostponeEnterTransition();
 
+        mFileNames = MainActivity.getFileNames();
+
         getWindow().getSharedElementEnterTransition().setDuration(Constants.TRANSITION_DURATION);
         getWindow().getSharedElementReturnTransition().setDuration(Constants.TRANSITION_DURATION);
-
-        mGestureDetector = new GestureDetector(this, this);
 
         actionBar = getSupportActionBar();
         assert actionBar != null;
@@ -56,11 +43,32 @@ public class EditorPage extends AppCompatActivity implements View.OnTouchListene
 
         load(setTransition());
 
-        findViewById(R.id.constraint_layout).setOnTouchListener(this);
-        Image.setOnTouchListener(this);
+        ViewPager pager = findViewById(R.id.constraint_layout);
+        ViewPagerAdapter adapter = new ViewPagerAdapter(this);
+        pager.setAdapter(adapter);
+        pager.setCurrentItem(MainActivity.position);
+
+        pager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                ViewPagerAdapter.counter = 0;
+                actionBar.setTitle(mFileNames.get(position));
+                MainActivity.position = position;
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
     }
 
-    private void changeActionBarPosition() {
+    public static void changeActionBarPosition() {
         if (actionBar.isShowing())
             actionBar.hide();
         else
@@ -68,35 +76,15 @@ public class EditorPage extends AppCompatActivity implements View.OnTouchListene
     }
 
     private void load(String[] info) {
-        String path = info[0];
+        // String path = info[0];
         String name = info[1];
         actionBar.setTitle(name);
-        Image.setScaleType(ImageView.ScaleType.FIT_CENTER);
-        Glide.with(this)
-                .load(path)
-                .dontAnimate()
-                .listener(new RequestListener<Drawable>() {
-                    @Override
-                    public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
-                        supportStartPostponedEnterTransition();
-                        return false;
-                    }
-
-                    @Override
-                    public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
-                        supportStartPostponedEnterTransition();
-                        return false;
-                    }
-                })
-                .into(Image);
     }
 
     private String[] setTransition() {
-        Image = findViewById(R.id.imageView_Image);
-        String transitionName = getIntent().getExtras().getString(Constants.IMAGE_TRANSITION_NAME);
+        // String transitionName = getIntent().getExtras().getString(Constants.IMAGE_TRANSITION_NAME);
         String path = getIntent().getExtras().getString(Constants.IMAGE_PATH);
         String name = getIntent().getExtras().getString(Constants.IMAGE_NAME);
-        ViewCompat.setTransitionName(Image, transitionName);
         return new String[]{path, name};
     }
 
@@ -116,101 +104,6 @@ public class EditorPage extends AppCompatActivity implements View.OnTouchListene
         return false;
     }
 
-    @SuppressLint("ClickableViewAccessibility")
-    @Override
-    public boolean onTouch(View view, MotionEvent event) {
-
-        mGestureDetector.onTouchEvent(event);
-
-        if (view.getId() == Image.getId()) {
-            if (counter == 0) {
-                init_x = Image.getX();
-                init_y = Image.getY();
-            }
-
-            counter++;
-
-            switch (event.getActionMasked()) {
-                case MotionEvent.ACTION_DOWN: {
-                    yDown = event.getY();
-                    break;
-                }
-                case MotionEvent.ACTION_MOVE: {
-                    float yMoved = event.getY();
-
-                    float distanceY = yMoved - yDown;
-
-                    Image.setX(Image.getX());
-                    Image.setY(Image.getY() + distanceY);
-
-                    break;
-                }
-                case MotionEvent.ACTION_UP: {
-                    float final_y = Image.getY();
-
-                    if (Math.abs(final_y - init_y) > Constants.EXIT_DISTANCE) {
-                        finishAfterTransition();
-                    } else {
-                        Image.animate()
-                                .x(init_x)
-                                .y(init_y)
-                                .setDuration(200)
-                                .start();
-                    }
-                    break;
-                }
-            }
-        }
-
-
-        return true;
-    }
-
-    @Override
-    public boolean onSingleTapConfirmed(MotionEvent e) {
-        return false;
-    }
-
-    @Override
-    public boolean onDoubleTap(MotionEvent e) {
-        return false;
-    }
-
-    @Override
-    public boolean onDoubleTapEvent(MotionEvent e) {
-        return false;
-    }
-
-    @Override
-    public boolean onDown(MotionEvent e) {
-        return false;
-    }
-
-    @Override
-    public void onShowPress(MotionEvent e) {
-
-    }
-
-    @Override
-    public boolean onSingleTapUp(MotionEvent e) {
-        changeActionBarPosition();
-        return true;
-    }
-
-    @Override
-    public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
-        return false;
-    }
-
-    @Override
-    public void onLongPress(MotionEvent e) {
-
-    }
-
-    @Override
-    public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
-        return false;
-    }
 
     @Override
     public void finishAfterTransition() {
