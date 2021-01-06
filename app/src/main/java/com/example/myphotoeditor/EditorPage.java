@@ -43,7 +43,7 @@ public class EditorPage extends AppCompatActivity {
 
         load(setTransition());
 
-        ViewPager pager = findViewById(R.id.constraint_layout);
+        ViewPager pager = findViewById(R.id.image_viewPager);
         ViewPagerAdapter adapter = new ViewPagerAdapter(this);
         pager.setAdapter(adapter);
         pager.setCurrentItem(MainActivity.position);
