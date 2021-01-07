@@ -3,7 +3,15 @@ package com.example.myphotoeditor;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
+import android.os.Build;
+import android.os.VibrationEffect;
+import android.os.Vibrator;
+import android.provider.MediaStore;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
@@ -22,6 +30,7 @@ import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 
 public class ViewPagerAdapter extends PagerAdapter implements GestureDetector.OnGestureListener {
@@ -103,14 +112,14 @@ public class ViewPagerAdapter extends PagerAdapter implements GestureDetector.On
                 case MotionEvent.ACTION_UP: {
                     float final_y = image.getY();
 
-                    if (Math.abs(final_y - init_y) > Constants.EXIT_DISTANCE) {
+                    if (final_y - init_y > Constants.EXIT_DISTANCE) {
                         ActivityCompat.finishAfterTransition(myActivity);
+                    } else if(init_y - final_y > Constants.EXIT_DISTANCE) {
+                        vibrate();
+                        shareImage(image);
+                        animateImage(image);
                     } else {
-                        image.animate()
-                                .x(init_x)
-                                .y(init_y)
-                                .setDuration(200)
-                                .start();
+                        animateImage(image);
                     }
                     break;
                 }
@@ -123,6 +132,37 @@ public class ViewPagerAdapter extends PagerAdapter implements GestureDetector.On
         container.addView(image);
 
         return image;
+    }
+
+    private void vibrate() {
+        Vibrator v = (Vibrator) mContext.getSystemService(Context.VIBRATOR_SERVICE);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            v.vibrate(VibrationEffect.createOneShot(Constants.VIBRATION_DURATION, VibrationEffect.DEFAULT_AMPLITUDE));
+        } else {
+            v.vibrate(Constants.VIBRATION_DURATION);
+        }
+    }
+
+    private void animateImage(ImageView image) {
+        image.animate()
+                .x(init_x)
+                .y(init_y)
+                .setDuration(Constants.RETURN_ANIMATION_DURATION)
+                .start();
+    }
+
+    @SuppressLint("SetWorldReadable")
+    private void shareImage(ImageView image) {
+        Drawable drawable = image.getDrawable();
+        Bitmap b = ((BitmapDrawable)drawable).getBitmap();
+        Intent share = new Intent(Intent.ACTION_SEND);
+        share.setType("image/*");
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        b.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
+        String path = MediaStore.Images.Media.insertImage(mContext.getContentResolver(), b, "Title", null);
+        Uri imageUri =  Uri.parse(path);
+        share.putExtra(Intent.EXTRA_STREAM, imageUri);
+        mContext.startActivity(Intent.createChooser(share, "Share image via"));
     }
 
     @Override

@@ -17,13 +17,10 @@ import android.os.Build;
 import android.os.Bundle;
 import android.transition.Fade;
 import android.transition.Transition;
-import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.TextView;
 
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity {

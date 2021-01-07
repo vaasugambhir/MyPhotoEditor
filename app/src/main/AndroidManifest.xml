@@ -3,6 +3,7 @@
     package="com.example.myphotoeditor">
 
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <application
@@ -12,6 +13,7 @@
         android:requestLegacyExternalStorage="true"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true">
+
         <activity android:name=".EditorPage"
             android:parentActivityName=".MainActivity"
             android:theme="@style/Theme.MyPhotoEditor"/>
