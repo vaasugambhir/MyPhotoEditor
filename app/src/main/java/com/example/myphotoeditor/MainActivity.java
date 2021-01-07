@@ -72,9 +72,9 @@ public class MainActivity extends AppCompatActivity {
             public void onMapSharedElements(List<String> names, Map<String, View> sharedElements) {
                 RecyclerView.ViewHolder holder = mImageList.findViewHolderForAdapterPosition(position);
                 mImageList.scrollToPosition(position);
-                if (holder != null)
+                if (holder == null)
                     return;
-                View view = ((RecyclerView.ViewHolder)holder).itemView.findViewById(R.id.imageView_holderImage);
+                View view = holder.itemView.findViewById(R.id.imageView_holderImage);
                 String transitionName = ViewCompat.getTransitionName(view);
                 names.clear();
                 sharedElements.clear();
