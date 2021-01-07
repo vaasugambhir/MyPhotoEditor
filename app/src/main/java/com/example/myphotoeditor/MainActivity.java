@@ -66,7 +66,8 @@ public class MainActivity extends AppCompatActivity {
     public void onActivityReenter(int resultCode, Intent data) {
         mImageList.scrollToPosition(position);
 
-        // final CustomSharedElementCallback callback = new CustomSharedElementCallback();
+        final CustomSharedElementCallback callback = new CustomSharedElementCallback();
+        /*
         setExitSharedElementCallback(new SharedElementCallback() {
             @Override
             public void onMapSharedElements(List<String> names, Map<String, View> sharedElements) {
@@ -83,6 +84,8 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+         */
+        setExitSharedElementCallback(callback);
         getWindow().getSharedElementExitTransition().addListener(new Transition.TransitionListener() {
             @Override
             public void onTransitionStart(Transition transition) {
@@ -109,6 +112,24 @@ public class MainActivity extends AppCompatActivity {
             private void removeCallback() {
                 getWindow().getSharedElementExitTransition().removeListener(this);
                 setExitSharedElementCallback((SharedElementCallback) null);
+            }
+        });
+
+        supportPostponeEnterTransition();
+
+        mImageList.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+            @Override
+            public boolean onPreDraw() {
+                mImageList.getViewTreeObserver().removeOnPreDrawListener(this);
+
+                RecyclerView.ViewHolder holder = mImageList.findViewHolderForAdapterPosition(position);
+                if (holder != null) {
+                    callback.setView(holder.itemView.findViewById(R.id.imageView_holderImage));
+                }
+
+                supportStartPostponedEnterTransition();
+
+                return true;
             }
         });
     }
