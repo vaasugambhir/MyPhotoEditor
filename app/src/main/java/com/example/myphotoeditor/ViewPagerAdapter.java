@@ -55,7 +55,6 @@ public class ViewPagerAdapter extends PagerAdapter implements GestureDetector.On
     @Override
     public Object instantiateItem(@NonNull ViewGroup container, int position) {
         ImageView image = new ImageView(mContext);
-        image.setScaleType(ImageView.ScaleType.FIT_CENTER);
         ViewCompat.setTransitionName(image, mFilePaths.get(position));
 
         Glide.with(mContext)
@@ -119,6 +118,8 @@ public class ViewPagerAdapter extends PagerAdapter implements GestureDetector.On
             return true;
         });
 
+        image.setScaleType(ImageView.ScaleType.FIT_CENTER);
+        image.setTag(position);
         container.addView(image);
 
         return image;

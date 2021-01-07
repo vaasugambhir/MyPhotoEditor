@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.ActivityOptionsCompat;
+import androidx.core.app.SharedElementCallback;
 import androidx.core.view.ViewCompat;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -15,9 +16,14 @@ import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.transition.Fade;
+import android.transition.Transition;
+import android.view.View;
+import android.view.ViewTreeObserver;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity {
@@ -56,6 +62,57 @@ public class MainActivity extends AppCompatActivity {
         setAdapter();
     }
 
+    @Override
+    public void onActivityReenter(int resultCode, Intent data) {
+        mImageList.scrollToPosition(position);
+
+        // final CustomSharedElementCallback callback = new CustomSharedElementCallback();
+        setExitSharedElementCallback(new SharedElementCallback() {
+            @Override
+            public void onMapSharedElements(List<String> names, Map<String, View> sharedElements) {
+                RecyclerView.ViewHolder holder = mImageList.findViewHolderForAdapterPosition(position);
+                mImageList.scrollToPosition(position);
+                if (holder != null)
+                    return;
+                View view = ((RecyclerView.ViewHolder)holder).itemView.findViewById(R.id.imageView_holderImage);
+                String transitionName = ViewCompat.getTransitionName(view);
+                names.clear();
+                sharedElements.clear();
+                names.add(transitionName);
+                sharedElements.put(transitionName, view);
+            }
+        });
+
+        getWindow().getSharedElementExitTransition().addListener(new Transition.TransitionListener() {
+            @Override
+            public void onTransitionStart(Transition transition) {
+            }
+
+            @Override
+            public void onTransitionEnd(Transition transition) {
+                removeCallback();
+            }
+
+            @Override
+            public void onTransitionCancel(Transition transition) {
+                removeCallback();
+            }
+
+            @Override
+            public void onTransitionPause(Transition transition) {
+            }
+
+            @Override
+            public void onTransitionResume(Transition transition) {
+            }
+
+            private void removeCallback() {
+                getWindow().getSharedElementExitTransition().removeListener(this);
+                setExitSharedElementCallback((SharedElementCallback) null);
+            }
+        });
+    }
+
     @RequiresApi(api = Build.VERSION_CODES.Q)
     private void permissions() {
         if (ActivityCompat.checkSelfPermission(MainActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
@@ -82,6 +139,7 @@ public class MainActivity extends AppCompatActivity {
         ImageAdapter adapter = new ImageAdapter(this);
         adapter.add(mFilePaths, mFileNames);
         adapter.addOnClickListener((image, path, name, pos) -> {
+            position = pos;
             Intent intent = new Intent(MainActivity.this, EditorPage.class);
             ActivityOptionsCompat optionsCompat = ActivityOptionsCompat
                     .makeSceneTransitionAnimation(MainActivity.this,
@@ -89,7 +147,6 @@ public class MainActivity extends AppCompatActivity {
             intent.putExtra(Constants.IMAGE_TRANSITION_NAME, ViewCompat.getTransitionName(image));
             intent.putExtra(Constants.IMAGE_PATH, path);
             intent.putExtra(Constants.IMAGE_NAME, name);
-            position = pos;
             startActivity(intent, optionsCompat.toBundle());
         });
         mImageList.setAdapter(adapter);

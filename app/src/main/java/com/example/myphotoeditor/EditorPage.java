@@ -3,20 +3,26 @@ package com.example.myphotoeditor;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.view.ViewCompat;
 import androidx.viewpager.widget.ViewPager;
 
 import android.annotation.SuppressLint;
+import android.app.SharedElementCallback;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.transition.Fade;
 import android.view.MenuItem;
+import android.view.View;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 public class EditorPage extends AppCompatActivity {
 
     private static ActionBar actionBar;
     private ArrayList<String> mFileNames;
+    private ViewPager mViewPager;
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
@@ -43,12 +49,12 @@ public class EditorPage extends AppCompatActivity {
 
         load(setTransition());
 
-        ViewPager pager = findViewById(R.id.image_viewPager);
+        mViewPager = findViewById(R.id.image_viewPager);
         ViewPagerAdapter adapter = new ViewPagerAdapter(this);
-        pager.setAdapter(adapter);
-        pager.setCurrentItem(MainActivity.position);
+        mViewPager.setAdapter(adapter);
+        mViewPager.setCurrentItem(MainActivity.position);
 
-        pager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+        mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
 
@@ -75,23 +81,17 @@ public class EditorPage extends AppCompatActivity {
             actionBar.show();
     }
 
-    private void load(String[] info) {
-        // String path = info[0];
-        String name = info[1];
-        actionBar.setTitle(name);
+    private void load(String info) {
+        actionBar.setTitle(info);
     }
 
-    private String[] setTransition() {
-        // String transitionName = getIntent().getExtras().getString(Constants.IMAGE_TRANSITION_NAME);
-        String path = getIntent().getExtras().getString(Constants.IMAGE_PATH);
-        String name = getIntent().getExtras().getString(Constants.IMAGE_NAME);
-        return new String[]{path, name};
+    private String setTransition() {
+        return getIntent().getExtras().getString(Constants.IMAGE_NAME);
     }
 
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        actionBar.hide();
         finishAfterTransition();
     }
 
@@ -108,6 +108,34 @@ public class EditorPage extends AppCompatActivity {
     @Override
     public void finishAfterTransition() {
         actionBar.hide();
+
+        setEnterSharedElementCallback(new SharedElementCallback() {
+            @Override
+            public void onMapSharedElements(List<String> names, Map<String, View> sharedElements) {
+                View view = getCurrentView();
+                if (view == null)
+                    return;
+
+                names.clear();
+                sharedElements.clear();
+
+                String transitionName = ViewCompat.getTransitionName(view);
+                names.add(transitionName);
+                sharedElements.put(transitionName, view);
+
+                setExitSharedElementCallback((SharedElementCallback) null);
+            }
+        });
+
+        setResult(RESULT_OK);
         super.finishAfterTransition();
+    }
+
+    private View getCurrentView() {
+        try {
+            return mViewPager.findViewWithTag(MainActivity.position);
+        } catch (NullPointerException | IndexOutOfBoundsException exception) {
+            return null;
+        }
     }
 }
