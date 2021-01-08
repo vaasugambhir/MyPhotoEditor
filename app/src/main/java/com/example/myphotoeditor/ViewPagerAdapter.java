@@ -116,7 +116,7 @@ public class ViewPagerAdapter extends PagerAdapter implements GestureDetector.On
                         ActivityCompat.finishAfterTransition(myActivity);
                     } else if(init_y - final_y > Constants.EXIT_DISTANCE) {
                         vibrate();
-                        shareImage(image);
+                        shareImage(position);
                         animateImage(image);
                     } else {
                         animateImage(image);
@@ -151,15 +151,10 @@ public class ViewPagerAdapter extends PagerAdapter implements GestureDetector.On
                 .start();
     }
 
-    @SuppressLint("SetWorldReadable")
-    private void shareImage(ImageView image) {
-        Drawable drawable = image.getDrawable();
-        Bitmap b = ((BitmapDrawable)drawable).getBitmap();
+    private void shareImage(int pos) {
         Intent share = new Intent(Intent.ACTION_SEND);
         share.setType("image/*");
-        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-        b.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
-        String path = MediaStore.Images.Media.insertImage(mContext.getContentResolver(), b, "Title", null);
+        String path = mFilePaths.get(pos);
         Uri imageUri =  Uri.parse(path);
         share.putExtra(Intent.EXTRA_STREAM, imageUri);
         mContext.startActivity(Intent.createChooser(share, "Share image via"));
