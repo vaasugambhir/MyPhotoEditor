@@ -64,24 +64,6 @@ public class MainActivity extends AppCompatActivity {
         mImageList.scrollToPosition(position);
 
         final CustomSharedElementCallback callback = new CustomSharedElementCallback();
-        /*
-        setExitSharedElementCallback(new SharedElementCallback() {
-            @Override
-            public void onMapSharedElements(List<String> names, Map<String, View> sharedElements) {
-                RecyclerView.ViewHolder holder = mImageList.findViewHolderForAdapterPosition(position);
-                mImageList.scrollToPosition(position);
-                if (holder == null)
-                    return;
-                View view = holder.itemView.findViewById(R.id.imageView_holderImage);
-                String transitionName = ViewCompat.getTransitionName(view);
-                names.clear();
-                sharedElements.clear();
-                names.add(transitionName);
-                sharedElements.put(transitionName, view);
-            }
-        });
-
-         */
         setExitSharedElementCallback(callback);
         getWindow().getSharedElementExitTransition().addListener(new Transition.TransitionListener() {
             @Override

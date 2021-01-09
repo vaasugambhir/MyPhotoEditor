@@ -13,6 +13,8 @@ import android.os.Bundle;
 import android.transition.Fade;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
+import android.widget.ImageView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,7 +24,7 @@ public class EditorPage extends AppCompatActivity {
 
     private static ActionBar actionBar;
     private ArrayList<String> mFileNames;
-    private ViewPager mViewPager;
+    private MyViewPager mViewPager;
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
@@ -50,7 +52,27 @@ public class EditorPage extends AppCompatActivity {
         load(setTransition());
 
         mViewPager = findViewById(R.id.image_viewPager);
+
         ViewPagerAdapter adapter = new ViewPagerAdapter(this);
+
+        Button setEnableDisable = findViewById(R.id.button_setEnableDisable);
+        String initialText = "Disable";
+        setEnableDisable.setText(initialText);
+
+        setEnableDisable.setOnClickListener(v -> {
+            ImageView current = mViewPager.findViewWithTag(MainActivity.position);
+            if (!current.isEnabled()) {
+                String text = "Disable";
+                setEnableDisable.setText(text);
+            } else {
+                String text = "Enable";
+                setEnableDisable.setText(text);
+            }
+            current.setEnabled(!current.isEnabled());
+            mViewPager.disableScroll(!mViewPager.isDisabled());
+            actionBar.hide();
+        });
+
         mViewPager.setAdapter(adapter);
         mViewPager.setCurrentItem(MainActivity.position);
 
