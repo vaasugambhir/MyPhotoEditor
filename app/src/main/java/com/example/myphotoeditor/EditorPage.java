@@ -15,6 +15,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -60,15 +61,15 @@ public class EditorPage extends AppCompatActivity {
         setEnableDisable.setText(initialText);
 
         setEnableDisable.setOnClickListener(v -> {
-            ImageView current = mViewPager.findViewWithTag(MainActivity.position);
-            if (!current.isEnabled()) {
-                String text = "Disable";
-                setEnableDisable.setText(text);
+            MyImageView current = mViewPager.findViewWithTag(MainActivity.position);
+            String text;
+            if (current.getEditingMode()) {
+                text = "Disable";
             } else {
-                String text = "Enable";
-                setEnableDisable.setText(text);
+                text = "Enable";
             }
-            current.setEnabled(!current.isEnabled());
+            setEnableDisable.setText(text);
+            current.setEditingMode(!current.getEditingMode());
             mViewPager.disableScroll(!mViewPager.isDisabled());
             actionBar.hide();
         });
@@ -79,12 +80,10 @@ public class EditorPage extends AppCompatActivity {
         mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-
             }
 
             @Override
             public void onPageSelected(int position) {
-                ViewPagerAdapter.counter = 0;
                 actionBar.setTitle(mFileNames.get(position));
                 MainActivity.position = position;
             }
@@ -113,6 +112,7 @@ public class EditorPage extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
+
         super.onBackPressed();
         finishAfterTransition();
     }
