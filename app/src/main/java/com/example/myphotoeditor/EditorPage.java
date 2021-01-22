@@ -3,13 +3,18 @@ package com.example.myphotoeditor;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.core.view.ViewCompat;
 import androidx.viewpager.widget.ViewPager;
 
 import android.annotation.SuppressLint;
 import android.app.SharedElementCallback;
+import android.graphics.Bitmap;
+import android.graphics.Matrix;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.transition.Fade;
 import android.view.MenuItem;
 import android.view.View;
@@ -19,6 +24,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import yuku.ambilwarna.AmbilWarnaDialog;
+
 public class EditorPage extends AppCompatActivity {
 
     // FIELDS
@@ -26,7 +33,7 @@ public class EditorPage extends AppCompatActivity {
     private ArrayList<String> mFileNames;
     private MyViewPager mViewPager;
     private Button mEdit, mPaint, mRotate, mChooseColor, mSave, mDone, mCancel, mCrop, mSetCrop, mCancelCrop;
-
+    private int mDefColor;
 
     // OVERRIDDEN METHODS
     @SuppressLint("ClickableViewAccessibility")
@@ -37,6 +44,7 @@ public class EditorPage extends AppCompatActivity {
         supportPostponeEnterTransition();
 
         mFileNames = MainActivity.getFileNames();
+        mDefColor = ContextCompat.getColor(this, R.color.white);
 
         getWindow().getSharedElementEnterTransition().setDuration(Constants.TRANSITION_DURATION);
         getWindow().getSharedElementReturnTransition().setDuration(Constants.TRANSITION_DURATION);
@@ -141,6 +149,135 @@ public class EditorPage extends AppCompatActivity {
     }
 
     // MY METHODS
+    public void rotate(View view) {
+        MyImageView currentView = getCurrentView();
+        if (currentView != null)
+            currentView.rotate();
+    }
+
+    public void save(View view) {
+        /*
+        MyImageView currentView = getCurrentView();
+        if (currentView != null) {
+            BitmapDrawable drawable = (BitmapDrawable) currentView.getDrawable();
+            Bitmap bitmap = drawable.getBitmap();
+            float rotation = currentView.getRotation();
+            Matrix matrix = new Matrix();
+            matrix.postRotate(rotation);
+            bitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
+            MediaStore.Images.Media.insertImage(getContentResolver(), bitmap, System.currentTimeMillis() + "", null);
+        }
+
+         */
+    }
+
+    public void paint(View view) {
+        MyImageView currentView = getCurrentView();
+        enterPaintMode();
+        if (currentView != null)
+            currentView.paint();
+    }
+
+    public void chooseColor(View view) {
+
+        MyImageView currentView = getCurrentView();
+        if (currentView != null) {
+
+            AmbilWarnaDialog colorDialog = new AmbilWarnaDialog(this, mDefColor, new AmbilWarnaDialog.OnAmbilWarnaListener() {
+                @Override
+                public void onCancel(AmbilWarnaDialog dialog) {
+
+                }
+
+                @Override
+                public void onOk(AmbilWarnaDialog dialog, int color) {
+                    mDefColor = color;
+                    currentView.setPaintColor(color);
+                }
+            });
+            colorDialog.show();
+        }
+    }
+
+    public void cancel(View view) {
+        MyImageView currentView = getCurrentView();
+        exitPaintMode();
+        if (currentView != null)
+            currentView.cancel();
+    }
+
+    public void done(View view) {
+        MyImageView currentView = getCurrentView();
+        exitPaintMode();
+        if (currentView != null)
+            currentView.done();
+    }
+
+    private void enterPaintMode() {
+        mChooseColor.setVisibility(View.VISIBLE);
+        mCancel.setVisibility(View.VISIBLE);
+        mDone.setVisibility(View.VISIBLE);
+        mCrop.setVisibility(View.GONE);
+        mSave.setVisibility(View.GONE);
+        mPaint.setVisibility(View.GONE);
+        mRotate.setVisibility(View.GONE);
+    }
+
+    private void exitPaintMode() {
+        mChooseColor.setVisibility(View.GONE);
+        mCancel.setVisibility(View.GONE);
+        mDone.setVisibility(View.GONE);
+        mCrop.setVisibility(View.VISIBLE);
+        mSave.setVisibility(View.VISIBLE);
+        mPaint.setVisibility(View.VISIBLE);
+        mRotate.setVisibility(View.VISIBLE);
+    }
+
+    private void enterCropMode() {
+        mCancelCrop.setVisibility(View.VISIBLE);
+        mSetCrop.setVisibility(View.VISIBLE);
+        mCrop.setVisibility(View.GONE);
+        mSave.setVisibility(View.GONE);
+        mPaint.setVisibility(View.GONE);
+        mRotate.setVisibility(View.GONE);
+    }
+
+    private void exitCropMode() {
+        mSetCrop.setVisibility(View.GONE);
+        mCancelCrop.setVisibility(View.GONE);
+        mCrop.setVisibility(View.VISIBLE);
+        mSave.setVisibility(View.VISIBLE);
+        mPaint.setVisibility(View.VISIBLE);
+        mRotate.setVisibility(View.VISIBLE);
+    }
+
+    public void undo(View view) {
+        MyImageView currentView = getCurrentView();
+        if (currentView != null)
+            currentView.undo();
+    }
+
+    public void crop(View view) {
+        enterCropMode();
+        MyImageView currentView = getCurrentView();
+        if (currentView != null)
+            currentView.crop();
+    }
+
+    public void setCrop(View view) {
+        exitCropMode();
+        MyImageView currentView = getCurrentView();
+        if (currentView != null)
+            currentView.setCrop();
+    }
+
+    public void cancelCrop(View view) {
+        exitCropMode();
+        MyImageView currentView = getCurrentView();
+        if (currentView != null)
+            currentView.cancelCrop();
+    }
+
     private void loadButtons() {
         mEdit = findViewById(R.id.button_edit);
         mPaint = findViewById(R.id.paint);
