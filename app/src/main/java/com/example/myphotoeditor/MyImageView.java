@@ -503,6 +503,10 @@ public class MyImageView extends androidx.appcompat.widget.AppCompatImageView im
         return drawable.getBitmap();
     }
 
+    public void setRotation(boolean set) {
+        this.mRotation = set;
+    }
+
     // OVERRIDDEN METHODS
     @SuppressLint("ClickableViewAccessibility")
     @Override

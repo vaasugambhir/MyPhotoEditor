@@ -16,6 +16,7 @@ import android.transition.Fade;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -99,6 +100,10 @@ public class EditorPage extends AppCompatActivity {
         if (imageView != null) {
             if (imageView.getEditingMode()) {
                 exitEditMode();
+                if (getCurrentView() != null)
+                    getCurrentView().disablePaintMode();
+                if (getCurrentView() != null)
+                    getCurrentView().disableCropMode();
             } else {
                 super.onBackPressed();
                 finishAfterTransition();
@@ -113,6 +118,10 @@ public class EditorPage extends AppCompatActivity {
             if (imageView != null) {
                 if (imageView.getEditingMode()) {
                     exitEditMode();
+                    if (getCurrentView() != null)
+                        getCurrentView().disablePaintMode();
+                    if (getCurrentView() != null)
+                        getCurrentView().disableCropMode();
                 } else {
                     finishAfterTransition();
                 }
@@ -225,8 +234,7 @@ public class EditorPage extends AppCompatActivity {
     }
 
     private void exitPaintMode() {
-        if (getCurrentView() != null)
-            getCurrentView().disablePaintMode();
+
         mChooseColor.setVisibility(View.GONE);
         mCancel.setVisibility(View.GONE);
         mDone.setVisibility(View.GONE);
@@ -247,8 +255,6 @@ public class EditorPage extends AppCompatActivity {
     }
 
     private void exitCropMode() {
-        if (getCurrentView() != null)
-            getCurrentView().disableCropMode();
         mSetCrop.setVisibility(View.GONE);
         mCancelCrop.setVisibility(View.GONE);
         mCrop.setVisibility(View.VISIBLE);
@@ -355,8 +361,9 @@ public class EditorPage extends AppCompatActivity {
 
         MyImageView currentImage = getCurrentView();
         if (currentImage != null) {
-            currentImage.setImageBitmap(mCurrentBitmap);
+            currentImage.setRotation(true);
             currentImage.setRotation(0);
+            currentImage.setImageBitmap(mCurrentBitmap);
             currentImage.setEditingMode(false);
             mViewPager.disableScroll(false);
         }
