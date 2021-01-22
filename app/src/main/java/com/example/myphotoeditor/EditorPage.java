@@ -21,10 +21,14 @@ import java.util.Map;
 
 public class EditorPage extends AppCompatActivity {
 
+    // FIELDS
     private static ActionBar actionBar;
     private ArrayList<String> mFileNames;
     private MyViewPager mViewPager;
+    private Button mEdit, mPaint, mRotate, mChooseColor, mSave, mDone, mCancel, mCrop, mSetCrop, mCancelCrop;
 
+
+    // OVERRIDDEN METHODS
     @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,27 +54,14 @@ public class EditorPage extends AppCompatActivity {
 
         load(setTransition());
 
+        loadButtons();
+        setMyViewPager();
+    }
+
+    private void setMyViewPager() {
         mViewPager = findViewById(R.id.image_viewPager);
 
         ViewPagerAdapter adapter = new ViewPagerAdapter(this);
-
-        Button setEnableDisable = findViewById(R.id.button_setEnableDisable);
-        String initialText = "Disable";
-        setEnableDisable.setText(initialText);
-
-        setEnableDisable.setOnClickListener(v -> {
-            MyImageView current = mViewPager.findViewWithTag(MainActivity.position);
-            String text;
-            if (current.getEditingMode()) {
-                text = "Disable";
-            } else {
-                text = "Enable";
-            }
-            setEnableDisable.setText(text);
-            current.setEditingMode(!current.getEditingMode());
-            mViewPager.disableScroll(!mViewPager.isDisabled());
-            actionBar.hide();
-        });
 
         mViewPager.setAdapter(adapter);
         mViewPager.setCurrentItem(MainActivity.position);
@@ -93,32 +84,30 @@ public class EditorPage extends AppCompatActivity {
         });
     }
 
-    public static void changeActionBarPosition() {
-        if (actionBar.isShowing())
-            actionBar.hide();
-        else
-            actionBar.show();
-    }
-
-    private void load(String info) {
-        actionBar.setTitle(info);
-    }
-
-    private String setTransition() {
-        return getIntent().getExtras().getString(Constants.IMAGE_NAME);
-    }
-
     @Override
     public void onBackPressed() {
-
-        super.onBackPressed();
-        finishAfterTransition();
+        MyImageView imageView = getCurrentView();
+        if (imageView != null) {
+            if (imageView.getEditingMode()) {
+                exitEditMode();
+            } else {
+                super.onBackPressed();
+                finishAfterTransition();
+            }
+        }
     }
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
-            finishAfterTransition();
+            MyImageView imageView = getCurrentView();
+            if (imageView != null) {
+                if (imageView.getEditingMode()) {
+                    exitEditMode();
+                } else {
+                    finishAfterTransition();
+                }
+            }
             return true;
         }
         return false;
@@ -151,11 +140,77 @@ public class EditorPage extends AppCompatActivity {
         super.finishAfterTransition();
     }
 
-    private View getCurrentView() {
+    // MY METHODS
+    private void loadButtons() {
+        mEdit = findViewById(R.id.button_edit);
+        mPaint = findViewById(R.id.paint);
+        mRotate = findViewById(R.id.rotate);
+        mChooseColor = findViewById(R.id.chooseColor);
+        mSave = findViewById(R.id.save);
+        mDone = findViewById(R.id.done);
+        mCancel = findViewById(R.id.cancel);
+        mCrop = findViewById(R.id.crop);
+        mSetCrop = findViewById(R.id.setCrop);
+        mCancelCrop = findViewById(R.id.cancelCrop);
+    }
+
+    public static void changeActionBarPosition() {
+        if (actionBar.isShowing())
+            actionBar.hide();
+        else
+            actionBar.show();
+    }
+
+    private void load(String info) {
+        actionBar.setTitle(info);
+    }
+
+    private String setTransition() {
+        return getIntent().getExtras().getString(Constants.IMAGE_NAME);
+    }
+
+    private MyImageView getCurrentView() {
         try {
             return mViewPager.findViewWithTag(MainActivity.position);
         } catch (NullPointerException | IndexOutOfBoundsException exception) {
             return null;
         }
+    }
+
+    public void edit(View view) {
+        enterEditMode();
+    }
+
+    private void enterEditMode() {
+        mEdit.setVisibility(View.GONE);
+        mCrop.setVisibility(View.VISIBLE);
+        mPaint.setVisibility(View.VISIBLE);
+        mSave.setVisibility(View.VISIBLE);
+        mRotate.setVisibility(View.VISIBLE);
+
+        MyImageView currentImage = getCurrentView();
+        if (currentImage != null) {
+            currentImage.setEditingMode(true);
+            mViewPager.disableScroll(true);
+        }
+
+        actionBar.hide();
+    }
+
+    private void exitEditMode() {
+        mEdit.setVisibility(View.VISIBLE);
+        mCrop.setVisibility(View.GONE);
+        mPaint.setVisibility(View.GONE);
+        mSave.setVisibility(View.GONE);
+        mRotate.setVisibility(View.GONE);
+
+
+        MyImageView currentImage = getCurrentView();
+        if (currentImage != null) {
+            currentImage.setEditingMode(false);
+            mViewPager.disableScroll(false);
+        }
+
+        actionBar.show();
     }
 }

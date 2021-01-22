@@ -18,88 +18,40 @@ import androidx.core.app.ActivityCompat;
 
 public class MyImageView extends androidx.appcompat.widget.AppCompatImageView implements GestureDetector.OnGestureListener{
 
+    // FIELDS
     private boolean editingMode = false;
     private float yDown = 0, init_x = 0, init_y = 0;
     private int counter = 0;
-    private final Context mContext;
-    private final Activity myActivity;
+    private Context mContext;
+    private Activity myActivity;
     private String mFilePath;
-    private final GestureDetector mGestureDetector;
+    private GestureDetector mGestureDetector;
 
     public MyImageView(@NonNull Context context) {
         super(context);
-        mContext = context;
-        myActivity = (Activity)context;
-        mGestureDetector = new GestureDetector(mContext, this);
+        init(context);
     }
 
     public MyImageView(@NonNull Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
-        mContext = context;
-        myActivity = (Activity)mContext;
-        mGestureDetector = new GestureDetector(mContext, this);
+        init(context);
     }
 
     public MyImageView(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+        init(context);
+    }
+
+    // MY METHODS
+    private void init(Context context) {
         mContext = context;
-        myActivity = (Activity)mContext;
+        editingMode = false;
+        myActivity = (Activity)context;
         mGestureDetector = new GestureDetector(mContext, this);
     }
 
     public void setPath(String path) {
         this.mFilePath = path;
-    }
-
-    @SuppressLint("ClickableViewAccessibility")
-    @Override
-    public boolean onTouchEvent(MotionEvent event) {
-
-        if (!editingMode) {
-
-            mGestureDetector.onTouchEvent(event);
-
-            if (counter == 0) {
-                init_x = this.getX();
-                init_y = this.getY();
-            }
-
-            counter++;
-
-            switch (event.getActionMasked()) {
-                case MotionEvent.ACTION_DOWN: {
-                    yDown = event.getY();
-                    break;
-                }
-                case MotionEvent.ACTION_MOVE: {
-                    float yMoved = event.getY();
-
-                    float distanceY = yMoved - yDown;
-
-                    this.setX(this.getX());
-                    this.setY(this.getY() + distanceY);
-
-                    break;
-                }
-                case MotionEvent.ACTION_UP: {
-                    float final_y = this.getY();
-
-                    if (final_y - init_y > Constants.EXIT_DISTANCE) {
-                        ActivityCompat.finishAfterTransition(myActivity);
-                    } else if (init_y - final_y > Constants.EXIT_DISTANCE) {
-                        vibrate();
-                        shareImage();
-                        animateImage();
-                    } else {
-                        animateImage();
-                    }
-                    break;
-                }
-            }
-        } else {
-            return false;
-        }
-        return true;
     }
 
     private void vibrate() {
@@ -134,6 +86,63 @@ public class MyImageView extends androidx.appcompat.widget.AppCompatImageView im
     public boolean getEditingMode() {
         return this.editingMode;
     }
+
+    private void editingModeOnTouch(MotionEvent event) {
+        mGestureDetector.onTouchEvent(event);
+
+        if (counter == 0) {
+            init_x = this.getX();
+            init_y = this.getY();
+        }
+
+        counter++;
+
+        switch (event.getActionMasked()) {
+            case MotionEvent.ACTION_DOWN: {
+                yDown = event.getY();
+                break;
+            }
+            case MotionEvent.ACTION_MOVE: {
+                float yMoved = event.getY();
+
+                float distanceY = yMoved - yDown;
+
+                this.setX(this.getX());
+                this.setY(this.getY() + distanceY);
+
+                break;
+            }
+            case MotionEvent.ACTION_UP: {
+                float final_y = this.getY();
+
+                if (final_y - init_y > Constants.EXIT_DISTANCE) {
+                    ActivityCompat.finishAfterTransition(myActivity);
+                } else if (init_y - final_y > Constants.EXIT_DISTANCE) {
+                    vibrate();
+                    shareImage();
+                    animateImage();
+                } else {
+                    animateImage();
+                }
+                break;
+            }
+        }
+    }
+
+    // OVERRIDDEN METHODS
+    @SuppressLint("ClickableViewAccessibility")
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+
+        if (!editingMode) {
+            editingModeOnTouch(event);
+        } else {
+            return false;
+        }
+        return true;
+    }
+
+
 
     @Override
     public boolean onDown(MotionEvent e) {
