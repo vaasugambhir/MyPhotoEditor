@@ -10,11 +10,8 @@ import androidx.viewpager.widget.ViewPager;
 import android.annotation.SuppressLint;
 import android.app.SharedElementCallback;
 import android.graphics.Bitmap;
-import android.graphics.Matrix;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.transition.Fade;
 import android.view.MenuItem;
 import android.view.View;
@@ -32,8 +29,9 @@ public class EditorPage extends AppCompatActivity {
     private static ActionBar actionBar;
     private ArrayList<String> mFileNames;
     private MyViewPager mViewPager;
-    private Button mEdit, mPaint, mRotate, mChooseColor, mSave, mDone, mCancel, mCrop, mSetCrop, mCancelCrop;
+    private Button mEdit, mPaint, mRotate, mChooseColor, mSave, mDone, mCancel, mCrop, mSetCrop, mCancelCrop, mUndo;
     private int mDefColor;
+    private Bitmap mCurrentBitmap;
 
     // OVERRIDDEN METHODS
     @SuppressLint("ClickableViewAccessibility")
@@ -73,6 +71,9 @@ public class EditorPage extends AppCompatActivity {
 
         mViewPager.setAdapter(adapter);
         mViewPager.setCurrentItem(MainActivity.position);
+
+        if (getCurrentView() != null)
+            mCurrentBitmap = Bitmap.createBitmap(getCurrentView().getImageBitmap());
 
         mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
@@ -224,9 +225,12 @@ public class EditorPage extends AppCompatActivity {
     }
 
     private void exitPaintMode() {
+        if (getCurrentView() != null)
+            getCurrentView().disablePaintMode();
         mChooseColor.setVisibility(View.GONE);
         mCancel.setVisibility(View.GONE);
         mDone.setVisibility(View.GONE);
+        mUndo.setVisibility(View.GONE);
         mCrop.setVisibility(View.VISIBLE);
         mSave.setVisibility(View.VISIBLE);
         mPaint.setVisibility(View.VISIBLE);
@@ -243,6 +247,8 @@ public class EditorPage extends AppCompatActivity {
     }
 
     private void exitCropMode() {
+        if (getCurrentView() != null)
+            getCurrentView().disableCropMode();
         mSetCrop.setVisibility(View.GONE);
         mCancelCrop.setVisibility(View.GONE);
         mCrop.setVisibility(View.VISIBLE);
@@ -289,6 +295,7 @@ public class EditorPage extends AppCompatActivity {
         mCrop = findViewById(R.id.crop);
         mSetCrop = findViewById(R.id.setCrop);
         mCancelCrop = findViewById(R.id.cancelCrop);
+        mUndo = findViewById(R.id.undo);
     }
 
     public static void changeActionBarPosition() {
@@ -315,6 +322,8 @@ public class EditorPage extends AppCompatActivity {
     }
 
     public void edit(View view) {
+        if (getCurrentView() != null)
+            mCurrentBitmap = Bitmap.createBitmap(getCurrentView().getImageBitmap());
         enterEditMode();
     }
 
@@ -335,15 +344,19 @@ public class EditorPage extends AppCompatActivity {
     }
 
     private void exitEditMode() {
+        exitCropMode();
+        exitPaintMode();
+
         mEdit.setVisibility(View.VISIBLE);
         mCrop.setVisibility(View.GONE);
         mPaint.setVisibility(View.GONE);
         mSave.setVisibility(View.GONE);
         mRotate.setVisibility(View.GONE);
 
-
         MyImageView currentImage = getCurrentView();
         if (currentImage != null) {
+            currentImage.setImageBitmap(mCurrentBitmap);
+            currentImage.setRotation(0);
             currentImage.setEditingMode(false);
             mViewPager.disableScroll(false);
         }

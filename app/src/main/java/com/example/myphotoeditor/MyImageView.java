@@ -11,6 +11,7 @@ import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.Rect;
 import android.graphics.RectF;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
@@ -497,6 +498,11 @@ public class MyImageView extends androidx.appcompat.widget.AppCompatImageView im
         postInvalidate();
     }
 
+    public Bitmap getImageBitmap() {
+        BitmapDrawable drawable = (BitmapDrawable) this.getDrawable();
+        return drawable.getBitmap();
+    }
+
     // OVERRIDDEN METHODS
     @SuppressLint("ClickableViewAccessibility")
     @Override
@@ -628,5 +634,18 @@ public class MyImageView extends androidx.appcompat.widget.AppCompatImageView im
     @Override
     public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
         return false;
+    }
+
+    public void disablePaintMode() {
+        mPaintMode = false;
+        mPaintPaths.clear();
+        mPaints.clear();
+        mCurrentPath.reset();
+        postInvalidate();
+    }
+
+    public void disableCropMode() {
+        mCropMode = false;
+        postInvalidate();
     }
 }
