@@ -481,6 +481,20 @@ public class MyImageView extends androidx.appcompat.widget.AppCompatImageView im
         mCropOuterRect.left = (int) (centreX - 250);
         mCropOuterRect.right = (int) (centreX + 250);
 
+        RectF rect = getImageRect();
+
+        if (mCropOuterRect.height() >=  rect.height()) {
+            mCropOuterRect.top = (int) (rect.top + 100);
+            mCropRectangle.top = (int) (rect.top + 100);
+            mCropOuterRect.bottom = (int) (rect.bottom - 100);
+            mCropRectangle.bottom = (int) (rect.bottom - 100);
+        } else if (mCropRectangle.width() >= rect.width()) {
+            mCropOuterRect.left = (int) (rect.left + 100);
+            mCropRectangle.left = (int) (rect.left + 100);
+            mCropOuterRect.right = (int) (rect.right - 100);
+            mCropRectangle.right = (int) (rect.right - 100);
+        }
+
         postInvalidate();
     }
 

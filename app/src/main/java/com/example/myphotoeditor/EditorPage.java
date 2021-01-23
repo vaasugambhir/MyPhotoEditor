@@ -17,9 +17,11 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.transition.Fade;
+import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -175,11 +177,19 @@ public class EditorPage extends AppCompatActivity {
     @RequiresApi(api = Build.VERSION_CODES.Q)
     public void save(View view) {
 
+
+        String saved = "Image saved in Gallery";
+        Toast saveToast = Toast.makeText(this, saved, Toast.LENGTH_SHORT);
+        saveToast.setText(saved);
+        saveToast.setDuration(Toast.LENGTH_SHORT);
+        saveToast.setGravity(Gravity.CENTER, 0, 0);
+
         MyImageView currentView = getCurrentView();
         if (currentView != null) {
             BitmapDrawable drawable = (BitmapDrawable) currentView.getDrawable();
             Bitmap bitmap = drawable.getBitmap();
             MediaStore.Images.Media.insertImage(getContentResolver(), bitmap, System.currentTimeMillis() + "", null);
+            saveToast.show();
         }
 
         exitEditMode();
