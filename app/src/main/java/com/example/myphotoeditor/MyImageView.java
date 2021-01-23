@@ -21,6 +21,7 @@ import android.util.AttributeSet;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.widget.Button;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -135,7 +136,7 @@ public class MyImageView extends androidx.appcompat.widget.AppCompatImageView im
         return this.editingMode;
     }
 
-    private void editingModeOnTouch(MotionEvent event) {
+    private void freeFlyingModeOnTouch(MotionEvent event) {
         mGestureDetector.onTouchEvent(event);
 
         if (counter == 0) {
@@ -178,8 +179,22 @@ public class MyImageView extends androidx.appcompat.widget.AppCompatImageView im
     }
 
     public void rotate() {
-        mRotation = true;
-        this.setRotation(this.getRotation() + 90);
+        // mRotation = true;
+        // this.setRotation(this.getRotation() + 90);
+        Bitmap bmp = getImageBitmap();
+        Matrix matrix = new Matrix();
+        matrix.postRotate(getRotation() + 90);
+        Bitmap bitmap = Bitmap.createBitmap(bmp, 0, 0, bmp.getWidth(), bmp.getHeight(), matrix, true);
+        this.setImageBitmap(bitmap);
+        /*
+        RectF rect = getImageRect();
+        this.setDrawingCacheEnabled(true);
+        this.buildDrawingCache();
+        Bitmap bitmap = Bitmap.createBitmap(this.getDrawingCache(), (int) rect.left, (int) rect.top, (int) rect.width(), (int) rect.height());
+        this.setImageBitmap(bitmap);
+        this.setDrawingCacheEnabled(false);
+
+         */
     }
 
     public void paint() {
@@ -516,7 +531,7 @@ public class MyImageView extends androidx.appcompat.widget.AppCompatImageView im
         float y = event.getY();
 
         if (!editingMode) {
-            editingModeOnTouch(event);
+            freeFlyingModeOnTouch(event);
         } else {
             if (mPaintMode) {
                 if (!getImageRect().contains(x, y))
@@ -577,6 +592,7 @@ public class MyImageView extends androidx.appcompat.widget.AppCompatImageView im
 
             setScaleX(scale / values[Matrix.MSCALE_X]);
             setScaleY(scale / values[Matrix.MSCALE_Y]);
+            Toast.makeText(mContext, "here it4ith4i", Toast.LENGTH_SHORT).show();
 
             mRotation = false;
             super.onDraw(canvas);

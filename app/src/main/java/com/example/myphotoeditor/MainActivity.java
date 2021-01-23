@@ -1,5 +1,6 @@
 package com.example.myphotoeditor;
 
+import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -27,6 +28,7 @@ public class MainActivity extends AppCompatActivity {
 
     private TextView mImageCount;
     private RecyclerView mImageList;
+    private ImageAdapter mAdapter;
 
     public static int position = 0;
     private static ArrayList<String> mFilePaths, mFileNames;
@@ -61,6 +63,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onActivityReenter(int resultCode, Intent data) {
+
         mImageList.scrollToPosition(position);
 
         final CustomSharedElementCallback callback = new CustomSharedElementCallback();
@@ -114,6 +117,28 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @RequiresApi(api = Build.VERSION_CODES.Q)
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (resultCode == RESULT_CANCELED)
+            return;
+
+        if (resultCode == RESULT_OK) {
+            if (EditorPage.mSaved) {
+                if (requestCode == Constants.REQUEST_CODE) {
+                    fetchingData();
+                    mAdapter.add(mFilePaths, mFileNames);
+                    mAdapter.notifyItemInserted(0);
+                    mAdapter.notifyDataSetChanged();
+                    mImageList.scrollToPosition(0);
+                }
+                EditorPage.mSaved = false;
+            }
+        }
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.Q)
     private void permissions() {
         if (ActivityCompat.checkSelfPermission(MainActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
             int PERMISSION_CODE = 100;
@@ -136,9 +161,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setAdapter() {
-        ImageAdapter adapter = new ImageAdapter(this);
-        adapter.add(mFilePaths, mFileNames);
-        adapter.addOnClickListener((image, path, name, pos) -> {
+        mAdapter = new ImageAdapter(this);
+        mAdapter.add(mFilePaths, mFileNames);
+        mAdapter.addOnClickListener((image, path, name, pos) -> {
             position = pos;
             Intent intent = new Intent(MainActivity.this, EditorPage.class);
             ActivityOptionsCompat optionsCompat = ActivityOptionsCompat
@@ -147,9 +172,9 @@ public class MainActivity extends AppCompatActivity {
             intent.putExtra(Constants.IMAGE_TRANSITION_NAME, ViewCompat.getTransitionName(image));
             intent.putExtra(Constants.IMAGE_PATH, path);
             intent.putExtra(Constants.IMAGE_NAME, name);
-            startActivity(intent, optionsCompat.toBundle());
+            startActivityForResult(intent, Constants.REQUEST_CODE, optionsCompat.toBundle());
         });
-        mImageList.setAdapter(adapter);
+        mImageList.setAdapter(mAdapter);
         mImageList.setLayoutManager(new GridLayoutManager(this, 4));
     }
 

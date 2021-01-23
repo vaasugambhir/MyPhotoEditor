@@ -8,4 +8,5 @@ public class Constants {
     public final static float EXIT_DISTANCE = 500f;
     public final static long VIBRATION_DURATION = 20;
     public final static long RETURN_ANIMATION_DURATION = 100;
+    public final static int REQUEST_CODE = 100;
 }

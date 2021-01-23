@@ -1,6 +1,7 @@
 package com.example.myphotoeditor;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
@@ -10,13 +11,15 @@ import androidx.viewpager.widget.ViewPager;
 import android.annotation.SuppressLint;
 import android.app.SharedElementCallback;
 import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
+import android.os.Build;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.transition.Fade;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,6 +36,7 @@ public class EditorPage extends AppCompatActivity {
     private Button mEdit, mPaint, mRotate, mChooseColor, mSave, mDone, mCancel, mCrop, mSetCrop, mCancelCrop, mUndo;
     private int mDefColor;
     private Bitmap mCurrentBitmap;
+    public static boolean mSaved;
 
     // OVERRIDDEN METHODS
     @SuppressLint("ClickableViewAccessibility")
@@ -41,6 +45,8 @@ public class EditorPage extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_editor_page);
         supportPostponeEnterTransition();
+
+        mSaved = false;
 
         mFileNames = MainActivity.getFileNames();
         mDefColor = ContextCompat.getColor(this, R.color.white);
@@ -155,6 +161,7 @@ public class EditorPage extends AppCompatActivity {
         });
 
         setResult(RESULT_OK);
+
         super.finishAfterTransition();
     }
 
@@ -165,20 +172,30 @@ public class EditorPage extends AppCompatActivity {
             currentView.rotate();
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.Q)
     public void save(View view) {
-        /*
+
         MyImageView currentView = getCurrentView();
         if (currentView != null) {
             BitmapDrawable drawable = (BitmapDrawable) currentView.getDrawable();
             Bitmap bitmap = drawable.getBitmap();
+            /*
             float rotation = currentView.getRotation();
             Matrix matrix = new Matrix();
             matrix.postRotate(rotation);
             bitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
+
+             */
             MediaStore.Images.Media.insertImage(getContentResolver(), bitmap, System.currentTimeMillis() + "", null);
         }
 
-         */
+        exitEditMode();
+        if (getCurrentView() != null)
+            getCurrentView().disablePaintMode();
+        if (getCurrentView() != null)
+            getCurrentView().disableCropMode();
+
+        mSaved = true;
     }
 
     public void paint(View view) {
