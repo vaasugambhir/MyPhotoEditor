@@ -10,11 +10,14 @@ import androidx.viewpager.widget.ViewPager;
 
 import android.annotation.SuppressLint;
 import android.app.SharedElementCallback;
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.VibrationEffect;
+import android.os.Vibrator;
 import android.provider.MediaStore;
 import android.transition.Fade;
 import android.view.Gravity;
@@ -87,6 +90,7 @@ public class EditorPage extends AppCompatActivity {
         mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
             }
 
             @Override
@@ -121,6 +125,7 @@ public class EditorPage extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        vibrate();
         if (item.getItemId() == android.R.id.home) {
             MyImageView imageView = getCurrentView();
             if (imageView != null) {
@@ -169,6 +174,7 @@ public class EditorPage extends AppCompatActivity {
 
     // MY METHODS
     public void rotate(View view) {
+        vibrate();
         MyImageView currentView = getCurrentView();
         if (currentView != null)
             currentView.rotate();
@@ -177,6 +183,7 @@ public class EditorPage extends AppCompatActivity {
     @RequiresApi(api = Build.VERSION_CODES.Q)
     public void save(View view) {
 
+        vibrate();
 
         String saved = "Image saved in Gallery";
         Toast saveToast = Toast.makeText(this, saved, Toast.LENGTH_SHORT);
@@ -202,6 +209,7 @@ public class EditorPage extends AppCompatActivity {
     }
 
     public void paint(View view) {
+        vibrate();
         MyImageView currentView = getCurrentView();
         enterPaintMode();
         if (currentView != null)
@@ -209,7 +217,7 @@ public class EditorPage extends AppCompatActivity {
     }
 
     public void chooseColor(View view) {
-
+        vibrate();
         MyImageView currentView = getCurrentView();
         if (currentView != null) {
 
@@ -230,6 +238,7 @@ public class EditorPage extends AppCompatActivity {
     }
 
     public void cancel(View view) {
+        vibrate();
         MyImageView currentView = getCurrentView();
         exitPaintMode();
         if (currentView != null)
@@ -237,6 +246,7 @@ public class EditorPage extends AppCompatActivity {
     }
 
     public void done(View view) {
+        vibrate();
         MyImageView currentView = getCurrentView();
         exitPaintMode();
         if (currentView != null)
@@ -284,12 +294,14 @@ public class EditorPage extends AppCompatActivity {
     }
 
     public void undo(View view) {
+        vibrate();
         MyImageView currentView = getCurrentView();
         if (currentView != null)
             currentView.undo();
     }
 
     public void crop(View view) {
+        vibrate();
         enterCropMode();
         MyImageView currentView = getCurrentView();
         if (currentView != null)
@@ -297,6 +309,7 @@ public class EditorPage extends AppCompatActivity {
     }
 
     public void setCrop(View view) {
+        vibrate();
         exitCropMode();
         MyImageView currentView = getCurrentView();
         if (currentView != null) {
@@ -306,6 +319,7 @@ public class EditorPage extends AppCompatActivity {
     }
 
     public void cancelCrop(View view) {
+        vibrate();
         exitCropMode();
         MyImageView currentView = getCurrentView();
         if (currentView != null)
@@ -323,14 +337,11 @@ public class EditorPage extends AppCompatActivity {
         mCrop = findViewById(R.id.crop);
         mSetCrop = findViewById(R.id.setCrop);
         mCancelCrop = findViewById(R.id.cancelCrop);
-        mUndo = findViewById(R.id.undo);
+        mUndo = findViewById(R.id.button_undo);
     }
 
-    public static void changeActionBarPosition() {
-        if (actionBar.isShowing())
-            actionBar.hide();
-        else
-            actionBar.show();
+    public static ActionBar getMyActionBar() {
+        return actionBar;
     }
 
     private void load(String info) {
@@ -350,6 +361,7 @@ public class EditorPage extends AppCompatActivity {
     }
 
     public void edit(View view) {
+        vibrate();
         if (getCurrentView() != null)
             mCurrentBitmap = Bitmap.createBitmap(getCurrentView().getImageBitmap());
         enterEditMode();
@@ -390,5 +402,14 @@ public class EditorPage extends AppCompatActivity {
         }
 
         actionBar.show();
+    }
+
+    private void vibrate() {
+        Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            v.vibrate(VibrationEffect.createOneShot(Constants.VIBRATION_DURATION, VibrationEffect.DEFAULT_AMPLITUDE));
+        } else {
+            v.vibrate(Constants.VIBRATION_DURATION);
+        }
     }
 }

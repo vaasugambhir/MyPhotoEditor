@@ -102,7 +102,7 @@
         app:layout_constraintVertical_bias="0.877" />
 
     <Button
-        android:id="@+id/undo"
+        android:id="@+id/button_undo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:onClick="undo"

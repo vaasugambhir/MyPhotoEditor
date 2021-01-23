@@ -1,5 +1,6 @@
 package com.example.myphotoeditor;
 
+import android.animation.Animator;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
@@ -23,6 +24,7 @@ import android.widget.Button;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
@@ -286,7 +288,7 @@ public class MyImageView extends androidx.appcompat.widget.AppCompatImageView im
 
     private Button getButton() {
         Activity myActivity = (Activity) mContext;
-        return myActivity.findViewById(R.id.undo);
+        return myActivity.findViewById(R.id.button_undo);
     }
 
     private boolean paintModeOnTouch(MotionEvent event) {
@@ -580,7 +582,59 @@ public class MyImageView extends androidx.appcompat.widget.AppCompatImageView im
 
     @Override
     public boolean onSingleTapUp(MotionEvent e) {
-        EditorPage.changeActionBarPosition();
+        ActionBar actionBar = EditorPage.getMyActionBar();
+        Button editButton = myActivity.findViewById(R.id.button_edit);
+
+        if (actionBar.isShowing()) {
+            actionBar.hide();
+
+            editButton.animate().translationYBy(getHeight()).setDuration(300).setListener(new Animator.AnimatorListener() {
+                @Override
+                public void onAnimationStart(Animator animation) {
+                    editButton.setVisibility(VISIBLE);
+                }
+
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    editButton.setVisibility(GONE);
+                }
+
+                @Override
+                public void onAnimationCancel(Animator animation) {
+
+                }
+
+                @Override
+                public void onAnimationRepeat(Animator animation) {
+
+                }
+            }).start();
+        }
+        else {
+            actionBar.show();
+            editButton.animate().translationY(0).setDuration(300).setListener(new Animator.AnimatorListener() {
+                @Override
+                public void onAnimationStart(Animator animation) {
+                    editButton.setVisibility(VISIBLE);
+                }
+
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    editButton.setVisibility(VISIBLE);
+                }
+
+                @Override
+                public void onAnimationCancel(Animator animation) {
+
+                }
+
+                @Override
+                public void onAnimationRepeat(Animator animation) {
+
+                }
+            }).start();
+
+        }
         return true;
     }
 
