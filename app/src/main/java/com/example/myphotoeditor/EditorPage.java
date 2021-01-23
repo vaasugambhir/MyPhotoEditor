@@ -279,8 +279,11 @@ public class EditorPage extends AppCompatActivity {
     public void setCrop(View view) {
         exitCropMode();
         MyImageView currentView = getCurrentView();
-        if (currentView != null)
+        if (currentView != null) {
             currentView.setCrop();
+            currentView.setRotation(true);
+            currentView.setRotation(currentView.getRotation());
+        }
     }
 
     public void cancelCrop(View view) {
