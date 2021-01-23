@@ -179,13 +179,6 @@ public class EditorPage extends AppCompatActivity {
         if (currentView != null) {
             BitmapDrawable drawable = (BitmapDrawable) currentView.getDrawable();
             Bitmap bitmap = drawable.getBitmap();
-            /*
-            float rotation = currentView.getRotation();
-            Matrix matrix = new Matrix();
-            matrix.postRotate(rotation);
-            bitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
-
-             */
             MediaStore.Images.Media.insertImage(getContentResolver(), bitmap, System.currentTimeMillis() + "", null);
         }
 
@@ -298,7 +291,6 @@ public class EditorPage extends AppCompatActivity {
         MyImageView currentView = getCurrentView();
         if (currentView != null) {
             currentView.setCrop();
-            currentView.setRotation(true);
             currentView.setRotation(currentView.getRotation());
         }
     }
@@ -381,7 +373,6 @@ public class EditorPage extends AppCompatActivity {
 
         MyImageView currentImage = getCurrentView();
         if (currentImage != null) {
-            currentImage.setRotation(true);
             currentImage.setRotation(0);
             currentImage.setImageBitmap(mCurrentBitmap);
             currentImage.setEditingMode(false);

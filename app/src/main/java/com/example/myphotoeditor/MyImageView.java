@@ -12,7 +12,6 @@ import android.graphics.Path;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.VibrationEffect;
@@ -21,7 +20,6 @@ import android.util.AttributeSet;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.widget.Button;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -41,7 +39,7 @@ public class MyImageView extends androidx.appcompat.widget.AppCompatImageView im
     private String mFilePath;
     private GestureDetector mGestureDetector;
     private int mDefColor;
-    private boolean mPaintMode, mRotation, mCropMode, mHappened;
+    private boolean mPaintMode, mCropMode, mHappened;
     private ArrayList<Path> mPaintPaths;
     private ArrayList<Paint> mPaints;
     private Paint mCurrentPaint, mRectPaint, mOuterRectPaint, mLinesPaint;
@@ -75,7 +73,6 @@ public class MyImageView extends androidx.appcompat.widget.AppCompatImageView im
         mGestureDetector = new GestureDetector(mContext, this);
         mDefColor = R.color.white;
         mPaintMode = false;
-        mRotation = false;
         mCropMode = false;
         mHappened = false;
         mPaintPaths = new ArrayList<>();
@@ -179,22 +176,11 @@ public class MyImageView extends androidx.appcompat.widget.AppCompatImageView im
     }
 
     public void rotate() {
-        // mRotation = true;
-        // this.setRotation(this.getRotation() + 90);
         Bitmap bmp = getImageBitmap();
         Matrix matrix = new Matrix();
         matrix.postRotate(getRotation() + 90);
         Bitmap bitmap = Bitmap.createBitmap(bmp, 0, 0, bmp.getWidth(), bmp.getHeight(), matrix, true);
         this.setImageBitmap(bitmap);
-        /*
-        RectF rect = getImageRect();
-        this.setDrawingCacheEnabled(true);
-        this.buildDrawingCache();
-        Bitmap bitmap = Bitmap.createBitmap(this.getDrawingCache(), (int) rect.left, (int) rect.top, (int) rect.width(), (int) rect.height());
-        this.setImageBitmap(bitmap);
-        this.setDrawingCacheEnabled(false);
-
-         */
     }
 
     public void paint() {
@@ -518,10 +504,6 @@ public class MyImageView extends androidx.appcompat.widget.AppCompatImageView im
         return drawable.getBitmap();
     }
 
-    public void setRotation(boolean set) {
-        this.mRotation = set;
-    }
-
     // OVERRIDDEN METHODS
     @SuppressLint("ClickableViewAccessibility")
     @Override
@@ -562,40 +544,6 @@ public class MyImageView extends androidx.appcompat.widget.AppCompatImageView im
             canvas.drawLine(mCropOuterRect.left + 2*mCropOuterRect.width()/3f, mCropOuterRect.top, mCropOuterRect.left + 2*mCropOuterRect.width()/3f, mCropOuterRect.bottom, mLinesPaint);
             canvas.drawLine(mCropOuterRect.left, mCropOuterRect.top + mCropOuterRect.height()/3f, mCropOuterRect.right, mCropOuterRect.top + mCropOuterRect.height()/3f, mLinesPaint);
             canvas.drawLine(mCropOuterRect.left, mCropOuterRect.top + 2*mCropOuterRect.height()/3f, mCropOuterRect.right, mCropOuterRect.top + 2*mCropOuterRect.height()/3f, mLinesPaint);
-        } else if (mRotation) {
-            Drawable d = getDrawable();
-
-            if (d == null) {
-                return;
-            }
-
-            int drawableWidth = d.getIntrinsicWidth();
-            int drawableHeight = d.getIntrinsicHeight();
-
-            if (drawableWidth <= 0 || drawableHeight <= 0) {
-                return;
-            }
-
-            double rotationRad = getRotation() / 180 * Math.PI;
-
-            double rotatedWidth = (Math.abs(Math.sin(rotationRad)) * drawableHeight
-                    + Math.abs(Math.cos(rotationRad)) * drawableWidth);
-            double rotatedHeight = (Math.abs(Math.cos(rotationRad)) * drawableHeight
-                    + Math.abs(Math.sin(rotationRad)) * drawableWidth);
-
-            int availableWidth = getMeasuredWidth();
-            int availableHeight = getMeasuredHeight();
-
-            float scale = (float) Math.min(availableWidth / rotatedWidth, availableHeight / rotatedHeight);
-
-            getImageMatrix().getValues(values);
-
-            setScaleX(scale / values[Matrix.MSCALE_X]);
-            setScaleY(scale / values[Matrix.MSCALE_Y]);
-            Toast.makeText(mContext, "here it4ith4i", Toast.LENGTH_SHORT).show();
-
-            mRotation = false;
-            super.onDraw(canvas);
         }
 
         for (int i = 0; i < mPaintPaths.size(); i++) {
@@ -604,25 +552,6 @@ public class MyImageView extends androidx.appcompat.widget.AppCompatImageView im
             canvas.drawPath(path, paint);
         }
         canvas.drawPath(mCurrentPath, mCurrentPaint);
-    }
-
-    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-
-        int beforeWidth = getMeasuredWidth();
-        int beforeHeight = getMeasuredHeight();
-        int max = Math.max(beforeWidth, beforeHeight);
-
-        setMeasuredDimension(getDefaultSize(max, widthMeasureSpec), getDefaultSize(max, heightMeasureSpec));
-    }
-
-
-    private final float[] values = new float[9];
-
-    @Override
-    public void setRotation(float rotation) {
-        super.setRotation(rotation);
-        invalidate();
     }
 
     @Override
