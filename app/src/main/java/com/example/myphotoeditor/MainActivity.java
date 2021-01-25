@@ -1,5 +1,6 @@
 package com.example.myphotoeditor;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
@@ -39,7 +40,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        permissions();
         Toolbar toolbar = findViewById(R.id.toolbar);
         toolbar.setTitle("Choose a picture");
         setSupportActionBar(toolbar);
@@ -57,8 +57,8 @@ public class MainActivity extends AppCompatActivity {
         mImageList = findViewById(R.id.recyclerView_image_list);
         mFileNames = new ArrayList<>();
 
-        fetchingData();
-        setAdapter();
+        permissions();
+
     }
 
     @Override
@@ -143,7 +143,21 @@ public class MainActivity extends AppCompatActivity {
         if (ActivityCompat.checkSelfPermission(MainActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
             int PERMISSION_CODE = 100;
             ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE}, PERMISSION_CODE);
+        } else {
+            fetchingData();
+            setAdapter();
         }
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.Q)
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == 100)
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                fetchingData();
+                setAdapter();
+            }
     }
 
     @RequiresApi(api = Build.VERSION_CODES.Q)
