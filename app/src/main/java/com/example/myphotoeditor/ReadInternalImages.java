@@ -23,11 +23,11 @@ public class ReadInternalImages {
         String absolutePathOfImage;
         uri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
 
-        String[] projection = {MediaStore.MediaColumns.DATA, MediaStore.Images.Media.BUCKET_DISPLAY_NAME};
-        String orderBy = MediaStore.Images.Media.DATE_TAKEN;
+        String[] projection = {MediaStore.Images.Media.BUCKET_DISPLAY_NAME, MediaStore.Images.Media.DATA, MediaStore.Images.Media._ID};
+        String orderBy = MediaStore.Images.Media.DATE_MODIFIED;
         cursor = context.getContentResolver().query(uri, projection, null, null, orderBy + " DESC");
         assert cursor != null;
-        column_index_data = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DATA);
+        column_index_data = cursor.getColumnIndex(MediaStore.Images.Media.DATA);
 
         while (cursor.moveToNext()) {
             absolutePathOfImage = cursor.getString(column_index_data);

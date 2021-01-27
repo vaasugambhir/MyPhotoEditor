@@ -33,19 +33,25 @@ import java.util.ArrayList;
 public class MyImageView extends androidx.appcompat.widget.AppCompatImageView implements GestureDetector.OnGestureListener{
 
     // FIELDS
-    private boolean editingMode = false;
+    //for image movement
     private float yDown = 0, init_x = 0, init_y = 0;
     private int counter = 0;
+    private GestureDetector mGestureDetector;
+
+    // necessary
     private Context mContext;
     private Activity myActivity;
     private String mFilePath;
-    private GestureDetector mGestureDetector;
+
+    // for paint
     private int mDefColor;
-    private boolean mPaintMode, mCropMode, mHappened;
+    private boolean mPaintMode, mCropMode, mHappened, mEditingMode;
     private ArrayList<Path> mPaintPaths;
     private ArrayList<Paint> mPaints;
     private Paint mCurrentPaint, mRectPaint, mOuterRectPaint, mLinesPaint;
     private Path mCurrentPath;
+
+    // for cropping
     private RectF mCropRectangle;
     private Rect mCropOuterRect;
     private float mCropRectTopH, mCropRectLeftW, mCropRectInitH, mCropRectInitW;
@@ -71,7 +77,7 @@ public class MyImageView extends androidx.appcompat.widget.AppCompatImageView im
     // MY METHODS
     private void init(Context context) {
         mContext = context;
-        editingMode = false;
+        mEditingMode = false;
         mScrolling = false;
         myActivity = (Activity)context;
         mGestureDetector = new GestureDetector(mContext, this);
@@ -130,11 +136,11 @@ public class MyImageView extends androidx.appcompat.widget.AppCompatImageView im
     }
 
     public void setEditingMode(boolean edit) {
-        this.editingMode = edit;
+        this.mEditingMode = edit;
     }
 
     public boolean getEditingMode() {
-        return this.editingMode;
+        return this.mEditingMode;
     }
 
     private void freeFlyingModeOnTouch(MotionEvent event) {
@@ -536,7 +542,7 @@ public class MyImageView extends androidx.appcompat.widget.AppCompatImageView im
 
         if (mScrolling) {
             this.animate().y(init_y).setDuration(0).start();
-        } else if (!editingMode) {
+        } else if (!mEditingMode) {
             freeFlyingModeOnTouch(event);
         } else {
             if (mPaintMode) {
