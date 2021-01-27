@@ -90,20 +90,28 @@ public class EditorPage extends AppCompatActivity {
         mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-
+                MyImageView imageView = getCurrentView();
+                if (positionOffset > 0.00000000000001) {
+                    imageView.setScrolling(true);
+                }
+                if (positionOffset == 0) {
+                    imageView.setScrolling(false);
+                }
             }
 
             @Override
             public void onPageSelected(int position) {
                 actionBar.setTitle(mFileNames.get(position));
                 MainActivity.position = position;
+                MyImageView imageView = getCurrentView();
+                imageView.setScrolling(false);
             }
 
             @Override
             public void onPageScrollStateChanged(int state) {
-
             }
         });
+
     }
 
     @Override

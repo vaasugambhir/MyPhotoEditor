@@ -51,6 +51,7 @@ public class MyImageView extends androidx.appcompat.widget.AppCompatImageView im
     private float mCropRectTopH, mCropRectLeftW, mCropRectInitH, mCropRectInitW;
     private int mCropCounter;
     private final float mCircleRadius = 15f;
+    private boolean mScrolling;
 
     public MyImageView(@NonNull Context context) {
         super(context);
@@ -71,6 +72,7 @@ public class MyImageView extends androidx.appcompat.widget.AppCompatImageView im
     private void init(Context context) {
         mContext = context;
         editingMode = false;
+        mScrolling = false;
         myActivity = (Activity)context;
         mGestureDetector = new GestureDetector(mContext, this);
         mDefColor = R.color.white;
@@ -138,13 +140,6 @@ public class MyImageView extends androidx.appcompat.widget.AppCompatImageView im
     private void freeFlyingModeOnTouch(MotionEvent event) {
         mGestureDetector.onTouchEvent(event);
 
-        if (counter == 0) {
-            init_x = this.getX();
-            init_y = this.getY();
-        }
-
-        counter++;
-
         switch (event.getActionMasked()) {
             case MotionEvent.ACTION_DOWN: {
                 yDown = event.getY();
@@ -195,6 +190,10 @@ public class MyImageView extends androidx.appcompat.widget.AppCompatImageView im
             mCurrentPaint.setColor(ContextCompat.getColor(mContext, R.color.white));
         else
             mCurrentPaint.setColor(this.mDefColor);
+    }
+
+    public void setScrolling(boolean set) {
+        mScrolling = set;
     }
 
     private Paint initPaint() {
@@ -528,7 +527,16 @@ public class MyImageView extends androidx.appcompat.widget.AppCompatImageView im
         float x = event.getX();
         float y = event.getY();
 
-        if (!editingMode) {
+        if (counter == 0) {
+            init_x = this.getX();
+            init_y = this.getY();
+        }
+
+        counter++;
+
+        if (mScrolling) {
+            this.animate().y(init_y).setDuration(0).start();
+        } else if (!editingMode) {
             freeFlyingModeOnTouch(event);
         } else {
             if (mPaintMode) {
