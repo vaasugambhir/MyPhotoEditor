@@ -162,16 +162,12 @@ public class MainActivity extends AppCompatActivity {
 
     @RequiresApi(api = Build.VERSION_CODES.Q)
     private void fetchingData() {
-        mFilePaths = ReadInternalImages.getImageList(this);
+        ArrayList<String>[] lists = ReadInternalImages.getImageList(this);
+        mFilePaths = lists[0];
+        mFileNames = lists[1];
         int imageCount = mFilePaths.size();
         String count = "Displaying " + imageCount + " images";
         mImageCount.setText(count);
-
-        for (String path : mFilePaths) {
-            int lastIndex = path.lastIndexOf('/');
-            String name = path.substring(lastIndex + 1);
-            mFileNames.add(name);
-        }
     }
 
     private void setAdapter() {
