@@ -19,15 +19,16 @@ public class ReadInternalImages {
 
         Uri uri;
         Cursor cursor;
-        int column_index_data;
+        int column_index_data, column_index_name;
         String absolutePathOfImage;
         uri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
 
         String[] projection = {MediaStore.Images.Media.BUCKET_DISPLAY_NAME, MediaStore.Images.Media.DATA, MediaStore.Images.Media._ID};
-        String orderBy = MediaStore.Images.Media.DATE_MODIFIED;
+        String orderBy = MediaStore.Images.Media.DATE_ADDED;
         cursor = context.getContentResolver().query(uri, projection, null, null, orderBy + " DESC");
         assert cursor != null;
         column_index_data = cursor.getColumnIndex(MediaStore.Images.Media.DATA);
+        column_index_name = cursor.getColumnIndex(MediaStore.Images.Media.BUCKET_DISPLAY_NAME);
 
         while (cursor.moveToNext()) {
             absolutePathOfImage = cursor.getString(column_index_data);
