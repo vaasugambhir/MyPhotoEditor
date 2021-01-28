@@ -64,7 +64,7 @@ public class EditorPage extends AppCompatActivity {
 
         actionBar = getSupportActionBar();
         assert actionBar != null;
-        actionBar.setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.special_transparent, getApplicationContext().getTheme())));
+        actionBar.setBackgroundDrawable(new ColorDrawable(ContextCompat.getColor(this, R.color.special_transparent)));
         actionBar.setDisplayHomeAsUpEnabled(true);
 
         Fade fade = new Fade();
@@ -351,7 +351,7 @@ public class EditorPage extends AppCompatActivity {
         if (currentView!= null) {
             RectF rect = currentView.getImageRect();
             if (rect.height() < 100 || rect.width() < 100) {
-                String notPossible = "Cannot crop image";
+                String notPossible = "Cannot crop images of small height/width";
                 Toast toast = Toast.makeText(this, notPossible, Toast.LENGTH_SHORT);
                 toast.setGravity(Gravity.CENTER, 0, 0);
                 toast.show();
