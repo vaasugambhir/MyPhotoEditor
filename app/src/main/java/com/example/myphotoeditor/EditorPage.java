@@ -12,6 +12,7 @@ import android.annotation.SuppressLint;
 import android.app.SharedElementCallback;
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.RectF;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
@@ -309,11 +310,15 @@ public class EditorPage extends AppCompatActivity {
     }
 
     public void crop(View view) {
-        vibrate();
-        enterCropMode();
         MyImageView currentView = getCurrentView();
-        if (currentView != null)
+        if (currentView!= null) {
+            RectF rect = currentView.getImageRect();
+            if (rect.height() < 25 || rect.width() < 25)
+                return;
+            vibrate();
+            enterCropMode();
             currentView.crop();
+        }
     }
 
     public void setCrop(View view) {

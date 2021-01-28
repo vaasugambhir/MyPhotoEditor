@@ -231,7 +231,7 @@ public class MyImageView extends androidx.appcompat.widget.AppCompatImageView im
         cancel();
     }
 
-    private RectF getImageRect() {
+    public RectF getImageRect() {
 
         int[] offset = new int[2];
         float[] values = new float[9];
@@ -491,15 +491,15 @@ public class MyImageView extends androidx.appcompat.widget.AppCompatImageView im
         RectF rect = getImageRect();
 
         if (mCropOuterRect.height() >=  rect.height()) {
-            mCropOuterRect.top = (int) (rect.top + 100);
-            mCropRectangle.top = (int) (rect.top + 100);
-            mCropOuterRect.bottom = (int) (rect.bottom - 100);
-            mCropRectangle.bottom = (int) (rect.bottom - 100);
+            mCropOuterRect.top = (int) (rect.top + 10);
+            mCropRectangle.top = (int) (rect.top + 10);
+            mCropOuterRect.bottom = (int) (rect.bottom - 10);
+            mCropRectangle.bottom = (int) (rect.bottom - 10);
         } else if (mCropRectangle.width() >= rect.width()) {
-            mCropOuterRect.left = (int) (rect.left + 100);
-            mCropRectangle.left = (int) (rect.left + 100);
-            mCropOuterRect.right = (int) (rect.right - 100);
-            mCropRectangle.right = (int) (rect.right - 100);
+            mCropOuterRect.left = (int) (rect.left + 10);
+            mCropRectangle.left = (int) (rect.left + 10);
+            mCropOuterRect.right = (int) (rect.right - 10);
+            mCropRectangle.right = (int) (rect.right - 10);
         }
 
         postInvalidate();
