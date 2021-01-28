@@ -194,7 +194,7 @@ public class EditorPage extends AppCompatActivity {
         MyImageView currentView = getCurrentView();
         if (currentView != null) {
             currentView.rotate();
-            if (currentView.getRotationDegrees()%360!=0) {
+            if (currentView.getRotationDegrees() % 360 != 0 || MyImageView.mHasBeenCropped || MyImageView.mHasBeenPainted) {
                 if (mSave.getVisibility() != View.VISIBLE) {
                     mSave.startAnimation(animationEnter);
                     mSave.setVisibility(View.VISIBLE);
@@ -295,6 +295,10 @@ public class EditorPage extends AppCompatActivity {
         exitPaintMode();
         if (currentView != null)
             currentView.cancel();
+        if (MyImageView.mHasBeenPainted || MyImageView.mHasBeenCropped) {
+            mSave.startAnimation(animationEnter);
+            mSave.setVisibility(View.VISIBLE);
+        }
     }
 
     public void done(View view) {
@@ -303,11 +307,10 @@ public class EditorPage extends AppCompatActivity {
         exitPaintMode();
         if (currentView != null) {
             currentView.done();
-            if (MyImageView.mHasBeenPainted) {
-                mSave.startAnimation(animationEnter);
-                mSave.setVisibility(View.VISIBLE);
-                MyImageView.mHasBeenPainted = false;
-            }
+        }
+        if (MyImageView.mHasBeenPainted || MyImageView.mHasBeenCropped) {
+            mSave.startAnimation(animationEnter);
+            mSave.setVisibility(View.VISIBLE);
         }
     }
 
@@ -404,10 +407,9 @@ public class EditorPage extends AppCompatActivity {
         if (currentView != null) {
             currentView.setCrop();
             currentView.setRotation(currentView.getRotation());
-            if (MyImageView.mHasBeenCropped) {
+            if (MyImageView.mHasBeenCropped || MyImageView.mHasBeenPainted) {
                 mSave.startAnimation(animationEnter);
                 mSave.setVisibility(View.VISIBLE);
-                MyImageView.mHasBeenCropped = false;
             }
         }
     }
@@ -418,6 +420,10 @@ public class EditorPage extends AppCompatActivity {
         MyImageView currentView = getCurrentView();
         if (currentView != null)
             currentView.cancelCrop();
+        if (MyImageView.mHasBeenCropped) {
+            mSave.startAnimation(animationEnter);
+            mSave.setVisibility(View.VISIBLE);
+        }
     }
 
     private void loadButtons() {
@@ -483,6 +489,8 @@ public class EditorPage extends AppCompatActivity {
     }
 
     private void exitEditMode() {
+        MyImageView.mHasBeenPainted = false;
+        MyImageView.mHasBeenCropped = false;
         mEdit.startAnimation(animationEnter);
         mEdit.setVisibility(View.VISIBLE);
         mCrop.startAnimation(animationExit);
