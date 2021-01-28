@@ -24,6 +24,8 @@ import android.transition.Fade;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.Toast;
 
@@ -263,42 +265,76 @@ public class EditorPage extends AppCompatActivity {
     }
 
     private void enterPaintMode() {
+        Animation animationEnter = AnimationUtils.loadAnimation(this, R.anim.bottom_to_top);
+        Animation animationExit = AnimationUtils.loadAnimation(this, R.anim.top_to_bottom);
+        mChooseColor.startAnimation(animationEnter);
         mChooseColor.setVisibility(View.VISIBLE);
+        mCancel.startAnimation(animationEnter);
         mCancel.setVisibility(View.VISIBLE);
+        mDone.startAnimation(animationEnter);
         mDone.setVisibility(View.VISIBLE);
+        mCrop.startAnimation(animationExit);
         mCrop.setVisibility(View.GONE);
+        mSave.startAnimation(animationExit);
         mSave.setVisibility(View.GONE);
+        mPaint.startAnimation(animationExit);
         mPaint.setVisibility(View.GONE);
+        mRotate.startAnimation(animationExit);
         mRotate.setVisibility(View.GONE);
     }
 
     private void exitPaintMode() {
-
+        Animation animationEnter = AnimationUtils.loadAnimation(this, R.anim.bottom_to_top);
+        Animation animationExit = AnimationUtils.loadAnimation(this, R.anim.top_to_bottom);
+        mChooseColor.startAnimation(animationExit);
         mChooseColor.setVisibility(View.GONE);
+        mCancel.startAnimation(animationExit);
         mCancel.setVisibility(View.GONE);
+        mDone.startAnimation(animationExit);
         mDone.setVisibility(View.GONE);
+        mUndo.startAnimation(animationExit);
         mUndo.setVisibility(View.GONE);
+        mCrop.startAnimation(animationEnter);
         mCrop.setVisibility(View.VISIBLE);
+        mSave.startAnimation(animationEnter);
         mSave.setVisibility(View.VISIBLE);
+        mPaint.startAnimation(animationEnter);
         mPaint.setVisibility(View.VISIBLE);
+        mRotate.startAnimation(animationEnter);
         mRotate.setVisibility(View.VISIBLE);
     }
 
     private void enterCropMode() {
+        Animation animationEnter = AnimationUtils.loadAnimation(this, R.anim.bottom_to_top);
+        Animation animationExit = AnimationUtils.loadAnimation(this, R.anim.top_to_bottom);
+        mCancelCrop.startAnimation(animationEnter);
         mCancelCrop.setVisibility(View.VISIBLE);
+        mSetCrop.startAnimation(animationEnter);
         mSetCrop.setVisibility(View.VISIBLE);
+        mCrop.startAnimation(animationExit);
         mCrop.setVisibility(View.GONE);
+        mSave.startAnimation(animationExit);
         mSave.setVisibility(View.GONE);
+        mPaint.startAnimation(animationExit);
         mPaint.setVisibility(View.GONE);
+        mRotate.startAnimation(animationExit);
         mRotate.setVisibility(View.GONE);
     }
 
     private void exitCropMode() {
+        Animation animationEnter = AnimationUtils.loadAnimation(this, R.anim.bottom_to_top);
+        Animation animationExit = AnimationUtils.loadAnimation(this, R.anim.top_to_bottom);
+        mSetCrop.startAnimation(animationExit);
         mSetCrop.setVisibility(View.GONE);
+        mCancelCrop.startAnimation(animationExit);
         mCancelCrop.setVisibility(View.GONE);
+        mCrop.startAnimation(animationEnter);
         mCrop.setVisibility(View.VISIBLE);
+        mSave.startAnimation(animationEnter);
         mSave.setVisibility(View.VISIBLE);
+        mPaint.startAnimation(animationEnter);
         mPaint.setVisibility(View.VISIBLE);
+        mRotate.startAnimation(animationEnter);
         mRotate.setVisibility(View.VISIBLE);
     }
 
@@ -381,10 +417,17 @@ public class EditorPage extends AppCompatActivity {
     }
 
     private void enterEditMode() {
+        Animation animationEnter = AnimationUtils.loadAnimation(this, R.anim.bottom_to_top);
+        Animation animationExit = AnimationUtils.loadAnimation(this, R.anim.top_to_bottom);
+        mEdit.startAnimation(animationExit);
         mEdit.setVisibility(View.GONE);
+        mCrop.startAnimation(animationEnter);
         mCrop.setVisibility(View.VISIBLE);
+        mPaint.startAnimation(animationEnter);
         mPaint.setVisibility(View.VISIBLE);
+        mSave.startAnimation(animationEnter);
         mSave.setVisibility(View.VISIBLE);
+        mRotate.startAnimation(animationEnter);
         mRotate.setVisibility(View.VISIBLE);
 
         MyImageView currentImage = getCurrentView();
@@ -400,10 +443,17 @@ public class EditorPage extends AppCompatActivity {
         exitCropMode();
         exitPaintMode();
 
+        Animation animationEnter = AnimationUtils.loadAnimation(this, R.anim.bottom_to_top);
+        Animation animationExit = AnimationUtils.loadAnimation(this, R.anim.top_to_bottom);
+        mEdit.startAnimation(animationEnter);
         mEdit.setVisibility(View.VISIBLE);
+        mCrop.startAnimation(animationExit);
         mCrop.setVisibility(View.GONE);
+        mPaint.startAnimation(animationExit);
         mPaint.setVisibility(View.GONE);
+        mSave.startAnimation(animationExit);
         mSave.setVisibility(View.GONE);
+        mRotate.startAnimation(animationExit);
         mRotate.setVisibility(View.GONE);
 
         MyImageView currentImage = getCurrentView();
