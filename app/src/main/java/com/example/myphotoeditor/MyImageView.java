@@ -144,6 +144,22 @@ public class MyImageView extends androidx.appcompat.widget.AppCompatImageView im
         return this.mEditingMode;
     }
 
+    public boolean getPaintMode() {
+        return this.mPaintMode;
+    }
+
+    public void setPaintMode(boolean set) {
+        this.mPaintMode = set;
+    }
+
+    public boolean getCropMode() {
+        return this.mCropMode;
+    }
+
+    public void setCropMode(boolean set) {
+        this.mCropMode = set;
+    }
+
     private void freeFlyingModeOnTouch(MotionEvent event) {
         mGestureDetector.onTouchEvent(event);
 

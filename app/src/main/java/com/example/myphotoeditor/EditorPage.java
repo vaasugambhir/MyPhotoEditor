@@ -129,12 +129,16 @@ public class EditorPage extends AppCompatActivity {
     public void onBackPressed() {
         MyImageView imageView = getCurrentView();
         if (imageView != null) {
-            if (imageView.getEditingMode()) {
+            if (imageView.getPaintMode()) {
+                exitPaintMode();
+                imageView.disablePaintMode();
+            } else if (imageView.getCropMode()) {
+                exitCropMode();
+                imageView.disableCropMode();
+            } else if (imageView.getEditingMode()) {
                 exitEditMode();
-                if (getCurrentView() != null)
-                    getCurrentView().disablePaintMode();
-                if (getCurrentView() != null)
-                    getCurrentView().disableCropMode();
+                imageView.disablePaintMode();
+                imageView.disableCropMode();
             } else {
                 super.onBackPressed();
                 finishAfterTransition();
@@ -146,18 +150,7 @@ public class EditorPage extends AppCompatActivity {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         vibrate();
         if (item.getItemId() == android.R.id.home) {
-            MyImageView imageView = getCurrentView();
-            if (imageView != null) {
-                if (imageView.getEditingMode()) {
-                    exitEditMode();
-                    if (getCurrentView() != null)
-                        getCurrentView().disablePaintMode();
-                    if (getCurrentView() != null)
-                        getCurrentView().disableCropMode();
-                } else {
-                    finishAfterTransition();
-                }
-            }
+            finishAfterTransition();
             return true;
         }
         return false;
@@ -219,10 +212,11 @@ public class EditorPage extends AppCompatActivity {
         }
 
         exitEditMode();
-        if (getCurrentView() != null)
-            getCurrentView().disablePaintMode();
-        if (getCurrentView() != null)
-            getCurrentView().disableCropMode();
+
+        if (currentView != null)
+            currentView.disablePaintMode();
+        if (currentView != null)
+            currentView.disableCropMode();
 
         mSaved = true;
     }
@@ -335,6 +329,7 @@ public class EditorPage extends AppCompatActivity {
         mPaint.setVisibility(View.VISIBLE);
         mRotate.startAnimation(animationEnter);
         mRotate.setVisibility(View.VISIBLE);
+
     }
 
     private void enterCropMode() {
@@ -381,7 +376,7 @@ public class EditorPage extends AppCompatActivity {
     @SuppressLint("ShowToast")
     public void crop(View view) {
         MyImageView currentView = getCurrentView();
-        if (currentView!= null) {
+        if (currentView != null) {
             RectF rect = currentView.getImageRect();
             if (rect.height() < 100 || rect.width() < 100) {
                 String notPossible = "Cannot crop images of small height/width";
@@ -479,9 +474,6 @@ public class EditorPage extends AppCompatActivity {
     }
 
     private void exitEditMode() {
-        exitCropMode();
-        exitPaintMode();
-
         Animation animationEnter = AnimationUtils.loadAnimation(this, R.anim.bottom_to_top);
         Animation animationExit = AnimationUtils.loadAnimation(this, R.anim.top_to_bottom);
         mEdit.startAnimation(animationEnter);
@@ -494,6 +486,7 @@ public class EditorPage extends AppCompatActivity {
         mSave.setVisibility(View.GONE);
         mRotate.startAnimation(animationExit);
         mRotate.setVisibility(View.GONE);
+
 
         MyImageView currentImage = getCurrentView();
         if (currentImage != null) {
