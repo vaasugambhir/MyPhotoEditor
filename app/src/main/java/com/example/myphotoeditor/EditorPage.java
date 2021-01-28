@@ -22,7 +22,6 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
-import android.provider.MediaStore;
 import android.transition.Fade;
 import android.view.Gravity;
 import android.view.MenuItem;
@@ -216,7 +215,6 @@ public class EditorPage extends AppCompatActivity {
             BitmapDrawable drawable = (BitmapDrawable) currentView.getDrawable();
             Bitmap bitmap = drawable.getBitmap();
             saveImage(bitmap);
-            //MediaStore.Images.Media.insertImage(getContentResolver(), bitmap, System.currentTimeMillis() + "", null);
             saveToast.show();
         }
 
