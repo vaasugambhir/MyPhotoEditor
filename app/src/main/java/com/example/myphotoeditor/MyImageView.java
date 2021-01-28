@@ -1,6 +1,5 @@
 package com.example.myphotoeditor;
 
-import android.animation.Animator;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
@@ -20,6 +19,8 @@ import android.os.Vibrator;
 import android.util.AttributeSet;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 
 import androidx.annotation.NonNull;
@@ -598,56 +599,18 @@ public class MyImageView extends androidx.appcompat.widget.AppCompatImageView im
     public boolean onSingleTapUp(MotionEvent e) {
         ActionBar actionBar = EditorPage.getMyActionBar();
         Button editButton = myActivity.findViewById(R.id.button_edit);
+        Animation animationEnter = AnimationUtils.loadAnimation(mContext, R.anim.bottom_to_top);
+        Animation animationExit = AnimationUtils.loadAnimation(mContext, R.anim.top_to_bottom);
 
         if (actionBar.isShowing()) {
             actionBar.hide();
-
-            editButton.animate().translationYBy(getHeight()).setDuration(300).setListener(new Animator.AnimatorListener() {
-                @Override
-                public void onAnimationStart(Animator animation) {
-                    editButton.setVisibility(VISIBLE);
-                }
-
-                @Override
-                public void onAnimationEnd(Animator animation) {
-                    editButton.setVisibility(GONE);
-                }
-
-                @Override
-                public void onAnimationCancel(Animator animation) {
-
-                }
-
-                @Override
-                public void onAnimationRepeat(Animator animation) {
-
-                }
-            }).start();
+            editButton.startAnimation(animationExit);
+            editButton.setVisibility(GONE);
         }
         else {
             actionBar.show();
-            editButton.animate().translationY(0).setDuration(300).setListener(new Animator.AnimatorListener() {
-                @Override
-                public void onAnimationStart(Animator animation) {
-                    editButton.setVisibility(VISIBLE);
-                }
-
-                @Override
-                public void onAnimationEnd(Animator animation) {
-                    editButton.setVisibility(VISIBLE);
-                }
-
-                @Override
-                public void onAnimationCancel(Animator animation) {
-
-                }
-
-                @Override
-                public void onAnimationRepeat(Animator animation) {
-
-                }
-            }).start();
-
+            editButton.startAnimation(animationEnter);
+            editButton.setVisibility(VISIBLE);
         }
         return true;
     }

@@ -345,12 +345,18 @@ public class EditorPage extends AppCompatActivity {
             currentView.undo();
     }
 
+    @SuppressLint("ShowToast")
     public void crop(View view) {
         MyImageView currentView = getCurrentView();
         if (currentView!= null) {
             RectF rect = currentView.getImageRect();
-            if (rect.height() < 25 || rect.width() < 25)
+            if (rect.height() < 100 || rect.width() < 100) {
+                String notPossible = "Cannot crop image";
+                Toast toast = Toast.makeText(this, notPossible, Toast.LENGTH_SHORT);
+                toast.setGravity(Gravity.CENTER, 0, 0);
+                toast.show();
                 return;
+            }
             vibrate();
             enterCropMode();
             currentView.crop();
