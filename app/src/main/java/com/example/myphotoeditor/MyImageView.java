@@ -37,6 +37,7 @@ public class MyImageView extends androidx.appcompat.widget.AppCompatImageView im
     //for image movement
     private float yDown = 0, init_x = 0, init_y = 0;
     private int counter = 0;
+    private int degrees = 0;
     private GestureDetector mGestureDetector;
 
     // necessary
@@ -51,6 +52,7 @@ public class MyImageView extends androidx.appcompat.widget.AppCompatImageView im
     private ArrayList<Paint> mPaints;
     private Paint mCurrentPaint, mRectPaint, mOuterRectPaint, mLinesPaint;
     private Path mCurrentPath;
+    public static boolean mHasBeenPainted = false;
 
     // for cropping
     private RectF mCropRectangle;
@@ -59,6 +61,7 @@ public class MyImageView extends androidx.appcompat.widget.AppCompatImageView im
     private int mCropCounter;
     private final float mCircleRadius = 15f;
     private boolean mScrolling;
+    public static boolean mHasBeenCropped = false;
 
     public MyImageView(@NonNull Context context) {
         super(context);
@@ -80,6 +83,7 @@ public class MyImageView extends androidx.appcompat.widget.AppCompatImageView im
         mContext = context;
         mEditingMode = false;
         mScrolling = false;
+        degrees = 0;
         myActivity = (Activity)context;
         mGestureDetector = new GestureDetector(mContext, this);
         mDefColor = R.color.white;
@@ -148,16 +152,8 @@ public class MyImageView extends androidx.appcompat.widget.AppCompatImageView im
         return this.mPaintMode;
     }
 
-    public void setPaintMode(boolean set) {
-        this.mPaintMode = set;
-    }
-
     public boolean getCropMode() {
         return this.mCropMode;
-    }
-
-    public void setCropMode(boolean set) {
-        this.mCropMode = set;
     }
 
     private void freeFlyingModeOnTouch(MotionEvent event) {
@@ -196,11 +192,20 @@ public class MyImageView extends androidx.appcompat.widget.AppCompatImageView im
     }
 
     public void rotate() {
+        degrees += 90;
         Bitmap bmp = getImageBitmap();
         Matrix matrix = new Matrix();
-        matrix.postRotate(getRotation() + 90);
+        matrix.postRotate(90);
         Bitmap bitmap = Bitmap.createBitmap(bmp, 0, 0, bmp.getWidth(), bmp.getHeight(), matrix, true);
         this.setImageBitmap(bitmap);
+    }
+
+    public void resetDegrees() {
+        degrees = 0;
+    }
+
+    public int getRotationDegrees() {
+        return degrees;
     }
 
     public void paint() {
@@ -245,6 +250,7 @@ public class MyImageView extends androidx.appcompat.widget.AppCompatImageView im
         Bitmap bmp = Bitmap.createBitmap(this.getDrawingCache(), (int) rect.left, (int) rect.top, (int) rect.width(), (int) rect.height());
         this.setDrawingCacheEnabled(false);
         this.setImageBitmap(bmp);
+        mHasBeenPainted = true;
         cancel();
     }
 
@@ -534,6 +540,7 @@ public class MyImageView extends androidx.appcompat.widget.AppCompatImageView im
         Bitmap bmp = Bitmap.createBitmap(this.getDrawingCache(), (int) mCropRectangle.left, (int) mCropRectangle.top, (int) mCropRectangle.width(), (int) mCropRectangle.height());
         this.setDrawingCacheEnabled(false);
         this.setImageBitmap(bmp);
+        mHasBeenCropped = true;
         postInvalidate();
     }
 
