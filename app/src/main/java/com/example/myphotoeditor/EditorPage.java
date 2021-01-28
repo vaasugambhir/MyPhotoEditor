@@ -333,6 +333,8 @@ public class EditorPage extends AppCompatActivity {
         mCancel.setVisibility(View.GONE);
         mUndo.startAnimation(animationExit);
         mUndo.setVisibility(View.GONE);
+        mDone.startAnimation(animationExit);
+        mDone.setVisibility(View.GONE);
         mCrop.startAnimation(animationEnter);
         mCrop.setVisibility(View.VISIBLE);
         mPaint.startAnimation(animationEnter);
