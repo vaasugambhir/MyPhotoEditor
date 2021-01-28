@@ -56,7 +56,7 @@ public class ViewPagerAdapter extends PagerAdapter {
 
         Glide.with(mContext)
                 .load(mFilePaths.get(position))
-                .centerCrop()
+                .fitCenter()
                 .dontAnimate()
                 .listener(new RequestListener<Drawable>() {
                     @Override
