@@ -63,6 +63,9 @@ public class MyImageView extends androidx.appcompat.widget.AppCompatImageView im
     private boolean mScrolling;
     public static boolean mHasBeenCropped = false;
 
+    // for button animations
+    private Animation animationEnter, animationExit;
+
     public MyImageView(@NonNull Context context) {
         super(context);
         init(context);
@@ -109,6 +112,8 @@ public class MyImageView extends androidx.appcompat.widget.AppCompatImageView im
         mCropRectangle = new RectF();
         mCropOuterRect = new Rect();
         mCropCounter = 0;
+        animationEnter = AnimationUtils.loadAnimation(mContext, R.anim.bottom_to_top);
+        animationExit = AnimationUtils.loadAnimation(mContext, R.anim.top_to_bottom);
     }
 
     public void setPath(String path) {
@@ -237,7 +242,7 @@ public class MyImageView extends androidx.appcompat.widget.AppCompatImageView im
     }
 
     public void done() {
-        getButton().setVisibility(GONE);
+        getUndoButton().setVisibility(GONE);
 
         if (mPaintPaths.isEmpty()) {
             cancel();
@@ -280,7 +285,8 @@ public class MyImageView extends androidx.appcompat.widget.AppCompatImageView im
     }
 
     public void cancel() {
-        getButton().setVisibility(GONE);
+        getUndoButton().setVisibility(GONE);
+        getDoneButton().setVisibility(GONE);
         mPaintPaths.clear();
         mPaints.clear();
         mPaintMode = false;
@@ -294,14 +300,21 @@ public class MyImageView extends androidx.appcompat.widget.AppCompatImageView im
     }
 
     private void updateList(boolean increment) {
+        Button undo = getUndoButton();
+        Button done = getDoneButton();
+
         if (increment) {
             mPaintPaths.add(mCurrentPath);
             mPaints.add(mCurrentPaint);
             mCurrentPath = new Path();
             mCurrentPaint = initPaint();
 
-            if (mPaintPaths.size() == 1)
-                getButton().setVisibility(VISIBLE);
+            if (mPaintPaths.size() == 1) {
+                undo.startAnimation(animationEnter);
+                undo.setVisibility(VISIBLE);
+                done.startAnimation(animationEnter);
+                done.setVisibility(VISIBLE);
+            }
 
         } else {
             if (mPaintPaths.isEmpty())
@@ -309,14 +322,21 @@ public class MyImageView extends androidx.appcompat.widget.AppCompatImageView im
             mPaintPaths.remove(mPaintPaths.size() - 1);
             mPaints.remove(mPaints.size() - 1);
 
-            if (mPaintPaths.isEmpty())
-                getButton().setVisibility(GONE);
+            if (mPaintPaths.isEmpty()) {
+                undo.startAnimation(animationExit);
+                undo.setVisibility(GONE);
+                done.startAnimation(animationExit);
+                done.setVisibility(GONE);
+            }
         }
     }
 
-    private Button getButton() {
-        Activity myActivity = (Activity) mContext;
+    private Button getUndoButton() {
         return myActivity.findViewById(R.id.button_undo);
+    }
+
+    private Button getDoneButton() {
+        return myActivity.findViewById(R.id.done);
     }
 
     private boolean paintModeOnTouch(MotionEvent event) {

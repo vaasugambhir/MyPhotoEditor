@@ -316,12 +316,10 @@ public class EditorPage extends AppCompatActivity {
         mChooseColor.setVisibility(View.VISIBLE);
         mCancel.startAnimation(animationEnter);
         mCancel.setVisibility(View.VISIBLE);
-        mDone.startAnimation(animationEnter);
-        mDone.setVisibility(View.VISIBLE);
-        mCrop.startAnimation(animationExit);
-        mCrop.setVisibility(View.GONE);
         mSave.startAnimation(animationExit);
         mSave.setVisibility(View.GONE);
+        mCrop.startAnimation(animationExit);
+        mCrop.setVisibility(View.GONE);
         mPaint.startAnimation(animationExit);
         mPaint.setVisibility(View.GONE);
         mRotate.startAnimation(animationExit);
@@ -333,14 +331,10 @@ public class EditorPage extends AppCompatActivity {
         mChooseColor.setVisibility(View.GONE);
         mCancel.startAnimation(animationExit);
         mCancel.setVisibility(View.GONE);
-        mDone.startAnimation(animationExit);
-        mDone.setVisibility(View.GONE);
         mUndo.startAnimation(animationExit);
         mUndo.setVisibility(View.GONE);
         mCrop.startAnimation(animationEnter);
         mCrop.setVisibility(View.VISIBLE);
-        //mSave.startAnimation(animationEnter);
-        //mSave.setVisibility(View.VISIBLE);
         mPaint.startAnimation(animationEnter);
         mPaint.setVisibility(View.VISIBLE);
         mRotate.startAnimation(animationEnter);
@@ -353,10 +347,10 @@ public class EditorPage extends AppCompatActivity {
         mCancelCrop.setVisibility(View.VISIBLE);
         mSetCrop.startAnimation(animationEnter);
         mSetCrop.setVisibility(View.VISIBLE);
-        mCrop.startAnimation(animationExit);
-        mCrop.setVisibility(View.GONE);
         mSave.startAnimation(animationExit);
         mSave.setVisibility(View.GONE);
+        mCrop.startAnimation(animationExit);
+        mCrop.setVisibility(View.GONE);
         mPaint.startAnimation(animationExit);
         mPaint.setVisibility(View.GONE);
         mRotate.startAnimation(animationExit);
@@ -370,8 +364,6 @@ public class EditorPage extends AppCompatActivity {
         mCancelCrop.setVisibility(View.GONE);
         mCrop.startAnimation(animationEnter);
         mCrop.setVisibility(View.VISIBLE);
-        //mSave.startAnimation(animationEnter);
-        //mSave.setVisibility(View.VISIBLE);
         mPaint.startAnimation(animationEnter);
         mPaint.setVisibility(View.VISIBLE);
         mRotate.startAnimation(animationEnter);
@@ -476,8 +468,6 @@ public class EditorPage extends AppCompatActivity {
         mCrop.setVisibility(View.VISIBLE);
         mPaint.startAnimation(animationEnter);
         mPaint.setVisibility(View.VISIBLE);
-        //mSave.startAnimation(animationEnter);
-        //mSave.setVisibility(View.VISIBLE);
         mRotate.startAnimation(animationEnter);
         mRotate.setVisibility(View.VISIBLE);
 
@@ -497,7 +487,8 @@ public class EditorPage extends AppCompatActivity {
         mCrop.setVisibility(View.GONE);
         mPaint.startAnimation(animationExit);
         mPaint.setVisibility(View.GONE);
-        mSave.startAnimation(animationExit);
+        if (mSave.getVisibility() == View.VISIBLE)
+            mSave.startAnimation(animationExit);
         mSave.setVisibility(View.GONE);
         mRotate.startAnimation(animationExit);
         mRotate.setVisibility(View.GONE);
