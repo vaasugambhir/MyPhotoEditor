@@ -57,6 +57,7 @@ public class ViewPagerAdapter extends PagerAdapter {
         Glide.with(mContext)
                 .load(mFilePaths.get(position))
                 .dontAnimate()
+                .fitCenter()
                 .listener(new RequestListener<Drawable>() {
                     @Override
                     public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
