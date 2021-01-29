@@ -45,7 +45,7 @@ public class EditorPage extends AppCompatActivity implements ChangePaintThicknes
     private static ActionBar actionBar;
     private ArrayList<String> mFileNames;
     private MyViewPager mViewPager;
-    private Button mEdit, mPaint, mRotate, mChooseColor, mSave, mDone, mCancel, mCrop, mSetCrop, mCancelCrop, mUndo;
+    private Button mEdit, mPaint, mRotate, mChooseColor, mChooseThickness, mSave, mDone, mCancel, mCrop, mSetCrop, mCancelCrop, mUndo;
     private int mDefColor;
     private Bitmap mCurrentBitmap;
     public static boolean mSaved;
@@ -318,6 +318,8 @@ public class EditorPage extends AppCompatActivity implements ChangePaintThicknes
     private void enterPaintMode() {
         mChooseColor.startAnimation(animationEnter);
         mChooseColor.setVisibility(View.VISIBLE);
+        mChooseThickness.startAnimation(animationEnter);
+        mChooseThickness.setVisibility(View.VISIBLE);
         mCancel.startAnimation(animationEnter);
         mCancel.setVisibility(View.VISIBLE);
         mSave.startAnimation(animationExit);
@@ -333,6 +335,8 @@ public class EditorPage extends AppCompatActivity implements ChangePaintThicknes
     private void exitPaintMode() {
         mChooseColor.startAnimation(animationExit);
         mChooseColor.setVisibility(View.GONE);
+        mChooseThickness.startAnimation(animationExit);
+        mChooseThickness.setVisibility(View.GONE);
         mCancel.startAnimation(animationExit);
         mCancel.setVisibility(View.GONE);
         mUndo.startAnimation(animationExit);
@@ -439,6 +443,7 @@ public class EditorPage extends AppCompatActivity implements ChangePaintThicknes
         mSetCrop = findViewById(R.id.setCrop);
         mCancelCrop = findViewById(R.id.cancelCrop);
         mUndo = findViewById(R.id.button_undo);
+        mChooseThickness = findViewById(R.id.button_changeThickness);
     }
 
     public static ActionBar getMyActionBar() {

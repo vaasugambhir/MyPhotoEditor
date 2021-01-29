@@ -159,6 +159,7 @@
         android:id="@+id/button_changeThickness"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:visibility="gone"
         android:text="change thickness"
         android:onClick="changeThickness"
         app:layout_constraintBottom_toBottomOf="parent"
