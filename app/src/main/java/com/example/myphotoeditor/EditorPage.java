@@ -539,6 +539,7 @@ public class EditorPage extends AppCompatActivity implements ChangePaintThicknes
     }
 
     public void changeThickness(View view) {
+        vibrate();
         MyImageView imageView = getCurrentView();
         if (imageView!=null) {
             ChangePaintThicknessDialog dialog = new ChangePaintThicknessDialog(mDefColor, imageView.getCurrentPaintThickness());
