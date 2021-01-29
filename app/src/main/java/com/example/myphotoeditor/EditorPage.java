@@ -39,7 +39,7 @@ import java.util.Map;
 
 import yuku.ambilwarna.AmbilWarnaDialog;
 
-public class EditorPage extends AppCompatActivity {
+public class EditorPage extends AppCompatActivity implements ChangePaintThicknessDialog.ChangePaintThicknessDialogListener {
 
     // FIELDS
     private static ActionBar actionBar;
@@ -522,6 +522,22 @@ public class EditorPage extends AppCompatActivity {
             v.vibrate(VibrationEffect.createOneShot(Constants.VIBRATION_DURATION, VibrationEffect.DEFAULT_AMPLITUDE));
         } else {
             v.vibrate(Constants.VIBRATION_DURATION);
+        }
+    }
+
+    @Override
+    public void applyThickness(float thickness) {
+        MyImageView imageView = getCurrentView();
+        if (imageView != null) {
+            imageView.setCurrentPaintThickness(thickness);
+        }
+    }
+
+    public void changeThickness(View view) {
+        MyImageView imageView = getCurrentView();
+        if (imageView!=null) {
+            ChangePaintThicknessDialog dialog = new ChangePaintThicknessDialog(mDefColor, imageView.getCurrentPaintThickness());
+            dialog.show(getSupportFragmentManager(), "Change Thickness");
         }
     }
 }

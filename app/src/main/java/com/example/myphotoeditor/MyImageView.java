@@ -52,6 +52,7 @@ public class MyImageView extends androidx.appcompat.widget.AppCompatImageView im
     private ArrayList<Paint> mPaints;
     private Paint mCurrentPaint, mRectPaint, mOuterRectPaint, mLinesPaint;
     private Path mCurrentPath;
+    private float currentThickness;
     public static boolean mHasBeenPainted = false;
 
     // for cropping
@@ -86,6 +87,7 @@ public class MyImageView extends androidx.appcompat.widget.AppCompatImageView im
         mContext = context;
         mEditingMode = false;
         mScrolling = false;
+        currentThickness = 10f;
         degrees = 0;
         myActivity = (Activity)context;
         mGestureDetector = new GestureDetector(mContext, this);
@@ -196,6 +198,16 @@ public class MyImageView extends androidx.appcompat.widget.AppCompatImageView im
         }
     }
 
+    public void setCurrentPaintThickness(float thickness) {
+        currentThickness = thickness;
+        mCurrentPaint.setStrokeWidth(thickness);
+        postInvalidate();
+    }
+
+    public float getCurrentPaintThickness() {
+        return currentThickness;
+    }
+
     public void rotate() {
         degrees += 90;
         Bitmap bmp = getImageBitmap();
@@ -235,7 +247,7 @@ public class MyImageView extends androidx.appcompat.widget.AppCompatImageView im
             paint.setColor(ContextCompat.getColor(mContext, R.color.white));
         else
             paint.setColor(this.mDefColor);
-        paint.setStrokeWidth(10f);
+        paint.setStrokeWidth(currentThickness);
         paint.setStrokeJoin(Paint.Join.ROUND);
         paint.setStyle(Paint.Style.STROKE);
         return paint;
