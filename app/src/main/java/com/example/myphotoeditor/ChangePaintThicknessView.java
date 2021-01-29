@@ -13,11 +13,9 @@ public class ChangePaintThicknessView extends View {
     private float mThickness;
     private int mCurrentColor;
     private Paint mCirclePaint;
-    private Context mContext;
 
     private void init(Context context) {
         mThickness = 10f;
-        mContext = context;
         mCurrentColor = ContextCompat.getColor(context, R.color.white);
         mCirclePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         mCirclePaint.setColor(mCurrentColor);
@@ -54,9 +52,5 @@ public class ChangePaintThicknessView extends View {
     public void setCurrentColor(int color) {
         mCurrentColor = color;
         mCirclePaint.setColor(color);
-    }
-
-    public float getThickness() {
-        return mThickness;
     }
 }
