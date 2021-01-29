@@ -293,11 +293,12 @@ public class EditorPage extends AppCompatActivity {
         vibrate();
         MyImageView currentView = getCurrentView();
         exitPaintMode();
-        if (currentView != null)
+        if (currentView != null) {
             currentView.cancel();
-        if (MyImageView.mHasBeenPainted || MyImageView.mHasBeenCropped) {
-            mSave.startAnimation(animationEnter);
-            mSave.setVisibility(View.VISIBLE);
+            if (MyImageView.mHasBeenPainted || MyImageView.mHasBeenCropped || currentView.getRotationDegrees() % 360 != 0) {
+                mSave.startAnimation(animationEnter);
+                mSave.setVisibility(View.VISIBLE);
+            }
         }
     }
 
@@ -307,10 +308,10 @@ public class EditorPage extends AppCompatActivity {
         exitPaintMode();
         if (currentView != null) {
             currentView.done();
-        }
-        if (MyImageView.mHasBeenPainted || MyImageView.mHasBeenCropped) {
-            mSave.startAnimation(animationEnter);
-            mSave.setVisibility(View.VISIBLE);
+            if (MyImageView.mHasBeenPainted || MyImageView.mHasBeenCropped || currentView.getRotationDegrees() % 360 != 0) {
+                mSave.startAnimation(animationEnter);
+                mSave.setVisibility(View.VISIBLE);
+            }
         }
     }
 
@@ -406,8 +407,7 @@ public class EditorPage extends AppCompatActivity {
         MyImageView currentView = getCurrentView();
         if (currentView != null) {
             currentView.setCrop();
-            currentView.setRotation(currentView.getRotation());
-            if (MyImageView.mHasBeenCropped || MyImageView.mHasBeenPainted) {
+            if (MyImageView.mHasBeenCropped || MyImageView.mHasBeenPainted || currentView.getRotationDegrees()%360!=0) {
                 mSave.startAnimation(animationEnter);
                 mSave.setVisibility(View.VISIBLE);
             }
@@ -418,11 +418,12 @@ public class EditorPage extends AppCompatActivity {
         vibrate();
         exitCropMode();
         MyImageView currentView = getCurrentView();
-        if (currentView != null)
+        if (currentView != null) {
             currentView.cancelCrop();
-        if (MyImageView.mHasBeenCropped) {
-            mSave.startAnimation(animationEnter);
-            mSave.setVisibility(View.VISIBLE);
+            if (MyImageView.mHasBeenCropped || MyImageView.mHasBeenPainted || currentView.getRotationDegrees()%360!=0) {
+                mSave.startAnimation(animationEnter);
+                mSave.setVisibility(View.VISIBLE);
+            }
         }
     }
 
