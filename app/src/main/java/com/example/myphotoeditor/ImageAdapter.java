@@ -54,8 +54,6 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ImageViewHol
 
         File image = new File(mFilePaths.get(position));
 
-        holder.image.setScaleType(ImageView.ScaleType.CENTER_CROP);
-
         ViewCompat.setTransitionName(holder.image, mFilePaths.get(position));
 
         holder.image.setOnClickListener(v -> {

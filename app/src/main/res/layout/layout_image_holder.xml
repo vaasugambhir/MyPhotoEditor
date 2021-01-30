@@ -10,6 +10,7 @@
         android:id="@+id/imageView_holderImage"
         android:layout_width="96dp"
         android:layout_height="96dp"
+        android:scaleType="centerCrop"
         android:background="@android:color/transparent"
         android:foreground="?attr/selectableItemBackgroundBorderless"
         app:shapeAppearanceOverlay="@style/circularCorners"
