@@ -4,12 +4,12 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
-    android:padding="2dp">
+    android:padding="1dp">
 
     <com.google.android.material.imageview.ShapeableImageView
         android:id="@+id/imageView_holderImage"
-        android:layout_width="92dp"
-        android:layout_height="92dp"
+        android:layout_width="96dp"
+        android:layout_height="96dp"
         android:background="@android:color/transparent"
         android:foreground="?attr/selectableItemBackgroundBorderless"
         app:shapeAppearanceOverlay="@style/circularCorners"
