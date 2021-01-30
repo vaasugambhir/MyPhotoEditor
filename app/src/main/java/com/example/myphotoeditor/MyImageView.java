@@ -250,6 +250,8 @@ public class MyImageView extends androidx.appcompat.widget.AppCompatImageView im
         paint.setStrokeWidth(currentThickness);
         paint.setStrokeJoin(Paint.Join.ROUND);
         paint.setStyle(Paint.Style.STROKE);
+        paint.setStrokeCap(Paint.Cap.ROUND);
+        paint.setDither(true);
         return paint;
     }
 
