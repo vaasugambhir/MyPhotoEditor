@@ -66,7 +66,6 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ImageViewHol
 
         Glide.with(context)
                 .load(image)
-                .centerCrop()
                 .into(holder.image);
 
     }
