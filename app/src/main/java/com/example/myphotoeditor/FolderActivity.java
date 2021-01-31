@@ -16,8 +16,6 @@ import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.transition.Fade;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Map;
@@ -69,16 +67,13 @@ public class FolderActivity extends AppCompatActivity {
         imagePaths.add(0, allImages.get(0));
         count.add(0, allImages.size());
 
-        FolderAdapter adapter = new FolderAdapter(this, new FolderAdapter.OnFolderClickListener() {
-            @Override
-            public void onFolderClick(int pos, TextView textView) {
-                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                intent.putExtra(Constants.CHOSEN_FOLDER, folderNames.get(pos));
-                chosenImages = map.get(folderNames.get(pos));
-                ActivityOptionsCompat options = ActivityOptionsCompat.
-                        makeSceneTransitionAnimation(FolderActivity.this, textView, ViewCompat.getTransitionName(textView));
-                startActivityForResult(intent, 10101, options.toBundle());
-            }
+        FolderAdapter adapter = new FolderAdapter(this, (pos, textView) -> {
+            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+            intent.putExtra(Constants.CHOSEN_FOLDER, folderNames.get(pos));
+            chosenImages = map.get(folderNames.get(pos));
+            ActivityOptionsCompat options = ActivityOptionsCompat.
+                    makeSceneTransitionAnimation(FolderActivity.this, textView, ViewCompat.getTransitionName(textView));
+            startActivityForResult(intent, 10101, options.toBundle());
         });
         adapter.add(folderNames, imagePaths, count);
         myList.setAdapter(adapter);
