@@ -48,7 +48,7 @@ public class EditorPage extends AppCompatActivity implements ChangePaintThicknes
     private Button mEdit, mPaint, mRotate, mChooseColor, mChooseThickness, mSave, mDone, mCancel, mCrop, mSetCrop, mCancelCrop, mUndo;
     private int mDefColor;
     private Bitmap mCurrentBitmap;
-    public static boolean mSaved;
+    public static boolean mSaved, mWasSaved;
     private Animation animationEnter, animationExit;
 
     // OVERRIDDEN METHODS
@@ -62,6 +62,7 @@ public class EditorPage extends AppCompatActivity implements ChangePaintThicknes
         animationEnter = AnimationUtils.loadAnimation(this, R.anim.bottom_to_top);
         animationExit = AnimationUtils.loadAnimation(this, R.anim.top_to_bottom);
         mSaved = false;
+        mWasSaved = false;
 
 //        Window w = getWindow();
 //        w.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
@@ -233,15 +234,18 @@ public class EditorPage extends AppCompatActivity implements ChangePaintThicknes
             currentView.disableCropMode();
 
         mSaved = true;
+        mWasSaved = true;
     }
 
     private void saveImage(Bitmap bitmap) {
         String root = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).getAbsolutePath();
-        String folderName = "MyPhotoEditor";
+        String folderName = Constants.MY_DIRECTORY;
         File myDirectory = new File(root + "/" + folderName);
         if (!myDirectory.exists())
             myDirectory.mkdirs();
-        String imageName = "MyPhotoEditor_" + System.currentTimeMillis() + "_rotidEotohPyM.jpg";
+        StringBuilder stringBuilder = new StringBuilder(Constants.MY_DIRECTORY);
+        String rev = stringBuilder.reverse().toString();
+        String imageName = Constants.MY_DIRECTORY + "_" + System.currentTimeMillis() + "_" + rev + ".jpg";
         File image = new File(myDirectory, imageName);
 
         try {

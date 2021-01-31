@@ -1,35 +1,36 @@
 package com.example.myphotoeditor;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.core.app.ActivityCompat;
 import androidx.core.app.ActivityOptionsCompat;
 import androidx.core.app.SharedElementCallback;
 import androidx.core.view.ViewCompat;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.Manifest;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.transition.Fade;
 import android.transition.Transition;
+import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Map;
 import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity {
 
-    private TextView mImageCount;
+    private TextView mImageFolder;
     private RecyclerView mImageList;
     private ImageAdapter mAdapter;
+    private String mChosenFolder;
+    public boolean ALL_IMAGE_MODE = false;
 
     public static int position = 0;
     private static ArrayList<String> mFilePaths, mFileNames;
@@ -40,6 +41,10 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        Intent intent = getIntent();
+        if (intent!=null)
+            mChosenFolder = intent.getExtras().getString(Constants.CHOSEN_FOLDER);
+
         Toolbar toolbar = findViewById(R.id.toolbar);
         toolbar.setTitle("Choose a picture");
         setSupportActionBar(toolbar);
@@ -48,17 +53,23 @@ public class MainActivity extends AppCompatActivity {
         getWindow().getSharedElementReturnTransition().setDuration(Constants.TRANSITION_DURATION);
 
         Fade fade = new Fade();
+        View view = getWindow().getDecorView();
+        fade.excludeTarget(view.findViewById(R.id.action_bar_container), true);
         fade.excludeTarget(android.R.id.statusBarBackground, true);
         fade.excludeTarget(android.R.id.navigationBarBackground, true);
         getWindow().setEnterTransition(fade);
         getWindow().setExitTransition(fade);
 
-        mImageCount = findViewById(R.id.textView_image_count);
+        supportPostponeEnterTransition();
+        mImageFolder = findViewById(R.id.textView_image_count);
+        mImageFolder.setText(mChosenFolder);
+        ViewCompat.setTransitionName(mImageFolder, mChosenFolder);
+        supportStartPostponedEnterTransition();
+
         mImageList = findViewById(R.id.recyclerView_image_list);
         mFileNames = new ArrayList<>();
 
-        permissions();
-
+        setAdapter();
     }
 
     @Override
@@ -139,39 +150,35 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @RequiresApi(api = Build.VERSION_CODES.Q)
-    private void permissions() {
-        if (ActivityCompat.checkSelfPermission(MainActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            int PERMISSION_CODE = 100;
-            ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE}, PERMISSION_CODE);
-        } else {
-            fetchingData();
-            setAdapter();
-        }
-    }
-
-    @RequiresApi(api = Build.VERSION_CODES.Q)
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == 100)
-            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                fetchingData();
-                setAdapter();
-            }
-    }
-
-    @RequiresApi(api = Build.VERSION_CODES.Q)
     private void fetchingData() {
-        ArrayList<String>[] lists = ReadInternalImages.getImageList(this);
-        mFilePaths = lists[0];
-        mFileNames = lists[1];
-        int imageCount = mFilePaths.size();
-        String count = "Displaying " + imageCount + " images";
-        mImageCount.setText(count);
+        Map<String, ArrayList<String>> map = ReadInternalImages.getImageAndAlbums(this);
+        if (!ALL_IMAGE_MODE)
+            mFilePaths = map.get(Constants.MY_DIRECTORY);
+        else
+            mFilePaths = ReadInternalImages.getImageList(this);
+        mImageFolder.setText(Constants.MY_DIRECTORY);
+        mFileNames = new ArrayList<>();
+        for (String path : mFilePaths) {
+            String name = path.substring(path.lastIndexOf('/') + 1);
+            mFileNames.add(name);
+        }
     }
 
     private void setAdapter() {
         mAdapter = new ImageAdapter(this);
+        if (mChosenFolder.equals(Constants.ALL_IMAGES)) {
+            mFilePaths = FolderActivity.getAllImages();
+            ALL_IMAGE_MODE = true;
+        }
+        else {
+            mFilePaths = FolderActivity.getChosenImages();
+            ALL_IMAGE_MODE = false;
+        }
+        mFileNames = new ArrayList<>();
+        for (String path : mFilePaths) {
+            String name = path.substring(path.lastIndexOf('/') + 1);
+            mFileNames.add(name);
+        }
         mAdapter.add(mFilePaths, mFileNames);
         mAdapter.addOnClickListener((image, path, name, pos) -> {
             position = pos;
@@ -194,5 +201,11 @@ public class MainActivity extends AppCompatActivity {
 
     public static ArrayList<String> getFilePaths() {
         return mFilePaths;
+    }
+
+    @Override
+    public void onBackPressed() {
+        finishAfterTransition();
+        super.onBackPressed();
     }
 }
