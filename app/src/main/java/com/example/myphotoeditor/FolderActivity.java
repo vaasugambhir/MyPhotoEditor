@@ -5,8 +5,6 @@ import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
-import androidx.core.app.ActivityOptionsCompat;
-import androidx.core.view.ViewCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -71,9 +69,8 @@ public class FolderActivity extends AppCompatActivity {
             Intent intent = new Intent(getApplicationContext(), MainActivity.class);
             intent.putExtra(Constants.CHOSEN_FOLDER, folderNames.get(pos));
             chosenImages = map.get(folderNames.get(pos));
-            ActivityOptionsCompat options = ActivityOptionsCompat.
-                    makeSceneTransitionAnimation(FolderActivity.this, textView, ViewCompat.getTransitionName(textView));
-            startActivityForResult(intent, 10101, options.toBundle());
+            startActivityForResult(intent, 10101);
+            overridePendingTransition(R.anim.fadein_special, R.anim.fadeout);
         });
         adapter.add(folderNames, imagePaths, count);
         myList.setAdapter(adapter);

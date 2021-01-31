@@ -59,11 +59,8 @@ public class MainActivity extends AppCompatActivity {
         getWindow().setEnterTransition(fade);
         getWindow().setExitTransition(fade);
 
-        supportPostponeEnterTransition();
         mImageFolder = findViewById(R.id.textView_image_count);
         mImageFolder.setText(mChosenFolder);
-        ViewCompat.setTransitionName(mImageFolder, mChosenFolder);
-        supportStartPostponedEnterTransition();
 
         mImageList = findViewById(R.id.recyclerView_image_list);
         mFileNames = new ArrayList<>();
@@ -204,7 +201,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        finishAfterTransition();
         super.onBackPressed();
+        overridePendingTransition(R.anim.fadein, R.anim.fadeout_special);
     }
 }

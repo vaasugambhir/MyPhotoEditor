@@ -50,7 +50,6 @@ public class FolderAdapter extends RecyclerView.Adapter<FolderAdapter.ViewHolder
         String path = paths.get(position);
         holder.folderName.setText(folders.get(position));
         holder.imageCount.setText(String.valueOf(count.get(position)));
-        ViewCompat.setTransitionName(holder.folderName, folders.get(position));
         holder.myLayout.setOnClickListener(v -> listener.onFolderClick(position, holder.folderName));
         Drawable defImage = ContextCompat.getDrawable(mContext, R.drawable.ic_camera_foreground);
         if (!path.equals(""))
