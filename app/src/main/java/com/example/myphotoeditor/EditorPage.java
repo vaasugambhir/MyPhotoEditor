@@ -42,14 +42,14 @@ import yuku.ambilwarna.AmbilWarnaDialog;
 public class EditorPage extends AppCompatActivity implements ChangePaintThicknessDialog.ChangePaintThicknessDialogListener {
 
     // FIELDS
-    private static ActionBar actionBar;
+    private static ActionBar mActionBar;
     private ArrayList<String> mFileNames;
     private MyViewPager mViewPager;
     private Button mEdit, mPaint, mRotate, mChooseColor, mChooseThickness, mSave, mDone, mCancel, mCrop, mSetCrop, mCancelCrop, mUndo;
     private int mDefColor;
     private Bitmap mCurrentBitmap;
     public static boolean mSaved, mWasSaved;
-    private Animation animationEnter, animationExit;
+    private Animation mAnimationEnter, mAnimationExit;
 
     // OVERRIDDEN METHODS
     @SuppressLint("ClickableViewAccessibility")
@@ -59,8 +59,8 @@ public class EditorPage extends AppCompatActivity implements ChangePaintThicknes
         setContentView(R.layout.activity_editor_page);
         supportPostponeEnterTransition();
 
-        animationEnter = AnimationUtils.loadAnimation(this, R.anim.bottom_to_top);
-        animationExit = AnimationUtils.loadAnimation(this, R.anim.top_to_bottom);
+        mAnimationEnter = AnimationUtils.loadAnimation(this, R.anim.bottom_to_top);
+        mAnimationExit = AnimationUtils.loadAnimation(this, R.anim.top_to_bottom);
         mSaved = false;
         mWasSaved = false;
 
@@ -74,10 +74,10 @@ public class EditorPage extends AppCompatActivity implements ChangePaintThicknes
         getWindow().getSharedElementEnterTransition().setDuration(Constants.TRANSITION_DURATION);
         getWindow().getSharedElementReturnTransition().setDuration(Constants.TRANSITION_DURATION);
 
-        actionBar = getSupportActionBar();
-        assert actionBar != null;
-        actionBar.setBackgroundDrawable(new ColorDrawable(ContextCompat.getColor(this, R.color.special_transparent)));
-        actionBar.setDisplayHomeAsUpEnabled(true);
+        mActionBar = getSupportActionBar();
+        assert mActionBar != null;
+        mActionBar.setBackgroundDrawable(new ColorDrawable(ContextCompat.getColor(this, R.color.special_transparent)));
+        mActionBar.setDisplayHomeAsUpEnabled(true);
 
         Fade fade = new Fade();
         fade.excludeTarget(android.R.id.statusBarBackground, true);
@@ -116,7 +116,7 @@ public class EditorPage extends AppCompatActivity implements ChangePaintThicknes
 
             @Override
             public void onPageSelected(int position) {
-                actionBar.setTitle(mFileNames.get(position));
+                mActionBar.setTitle(mFileNames.get(position));
                 MainActivity.position = position;
                 MyImageView imageView = getCurrentView();
                 imageView.setScrolling(false);
@@ -164,7 +164,7 @@ public class EditorPage extends AppCompatActivity implements ChangePaintThicknes
 
     @Override
     public void finishAfterTransition() {
-        actionBar.hide();
+        mActionBar.hide();
 
         setEnterSharedElementCallback(new SharedElementCallback() {
             @Override
@@ -197,11 +197,11 @@ public class EditorPage extends AppCompatActivity implements ChangePaintThicknes
             currentView.rotate();
             if (currentView.getRotationDegrees() % 360 != 0 || MyImageView.mHasBeenCropped || MyImageView.mHasBeenPainted) {
                 if (mSave.getVisibility() != View.VISIBLE) {
-                    mSave.startAnimation(animationEnter);
+                    mSave.startAnimation(mAnimationEnter);
                     mSave.setVisibility(View.VISIBLE);
                 }
             } else {
-                mSave.startAnimation(animationExit);
+                mSave.startAnimation(mAnimationExit);
                 mSave.setVisibility(View.GONE);
             }
         }
@@ -300,7 +300,7 @@ public class EditorPage extends AppCompatActivity implements ChangePaintThicknes
         if (currentView != null) {
             currentView.cancel();
             if (MyImageView.mHasBeenPainted || MyImageView.mHasBeenCropped || currentView.getRotationDegrees() % 360 != 0) {
-                mSave.startAnimation(animationEnter);
+                mSave.startAnimation(mAnimationEnter);
                 mSave.setVisibility(View.VISIBLE);
             }
         }
@@ -313,74 +313,74 @@ public class EditorPage extends AppCompatActivity implements ChangePaintThicknes
         if (currentView != null) {
             currentView.done();
             if (MyImageView.mHasBeenPainted || MyImageView.mHasBeenCropped || currentView.getRotationDegrees() % 360 != 0) {
-                mSave.startAnimation(animationEnter);
+                mSave.startAnimation(mAnimationEnter);
                 mSave.setVisibility(View.VISIBLE);
             }
         }
     }
 
     private void enterPaintMode() {
-        mChooseColor.startAnimation(animationEnter);
+        mChooseColor.startAnimation(mAnimationEnter);
         mChooseColor.setVisibility(View.VISIBLE);
-        mChooseThickness.startAnimation(animationEnter);
+        mChooseThickness.startAnimation(mAnimationEnter);
         mChooseThickness.setVisibility(View.VISIBLE);
-        mCancel.startAnimation(animationEnter);
+        mCancel.startAnimation(mAnimationEnter);
         mCancel.setVisibility(View.VISIBLE);
-        mSave.startAnimation(animationExit);
+        mSave.startAnimation(mAnimationExit);
         mSave.setVisibility(View.GONE);
-        mCrop.startAnimation(animationExit);
+        mCrop.startAnimation(mAnimationExit);
         mCrop.setVisibility(View.GONE);
-        mPaint.startAnimation(animationExit);
+        mPaint.startAnimation(mAnimationExit);
         mPaint.setVisibility(View.GONE);
-        mRotate.startAnimation(animationExit);
+        mRotate.startAnimation(mAnimationExit);
         mRotate.setVisibility(View.GONE);
     }
 
     private void exitPaintMode() {
-        mChooseColor.startAnimation(animationExit);
+        mChooseColor.startAnimation(mAnimationExit);
         mChooseColor.setVisibility(View.GONE);
-        mChooseThickness.startAnimation(animationExit);
+        mChooseThickness.startAnimation(mAnimationExit);
         mChooseThickness.setVisibility(View.GONE);
-        mCancel.startAnimation(animationExit);
+        mCancel.startAnimation(mAnimationExit);
         mCancel.setVisibility(View.GONE);
-        mUndo.startAnimation(animationExit);
+        mUndo.startAnimation(mAnimationExit);
         mUndo.setVisibility(View.GONE);
-        mDone.startAnimation(animationExit);
+        mDone.startAnimation(mAnimationExit);
         mDone.setVisibility(View.GONE);
-        mCrop.startAnimation(animationEnter);
+        mCrop.startAnimation(mAnimationEnter);
         mCrop.setVisibility(View.VISIBLE);
-        mPaint.startAnimation(animationEnter);
+        mPaint.startAnimation(mAnimationEnter);
         mPaint.setVisibility(View.VISIBLE);
-        mRotate.startAnimation(animationEnter);
+        mRotate.startAnimation(mAnimationEnter);
         mRotate.setVisibility(View.VISIBLE);
 
     }
 
     private void enterCropMode() {
-        mCancelCrop.startAnimation(animationEnter);
+        mCancelCrop.startAnimation(mAnimationEnter);
         mCancelCrop.setVisibility(View.VISIBLE);
-        mSetCrop.startAnimation(animationEnter);
+        mSetCrop.startAnimation(mAnimationEnter);
         mSetCrop.setVisibility(View.VISIBLE);
-        mSave.startAnimation(animationExit);
+        mSave.startAnimation(mAnimationExit);
         mSave.setVisibility(View.GONE);
-        mCrop.startAnimation(animationExit);
+        mCrop.startAnimation(mAnimationExit);
         mCrop.setVisibility(View.GONE);
-        mPaint.startAnimation(animationExit);
+        mPaint.startAnimation(mAnimationExit);
         mPaint.setVisibility(View.GONE);
-        mRotate.startAnimation(animationExit);
+        mRotate.startAnimation(mAnimationExit);
         mRotate.setVisibility(View.GONE);
     }
 
     private void exitCropMode() {
-        mSetCrop.startAnimation(animationExit);
+        mSetCrop.startAnimation(mAnimationExit);
         mSetCrop.setVisibility(View.GONE);
-        mCancelCrop.startAnimation(animationExit);
+        mCancelCrop.startAnimation(mAnimationExit);
         mCancelCrop.setVisibility(View.GONE);
-        mCrop.startAnimation(animationEnter);
+        mCrop.startAnimation(mAnimationEnter);
         mCrop.setVisibility(View.VISIBLE);
-        mPaint.startAnimation(animationEnter);
+        mPaint.startAnimation(mAnimationEnter);
         mPaint.setVisibility(View.VISIBLE);
-        mRotate.startAnimation(animationEnter);
+        mRotate.startAnimation(mAnimationEnter);
         mRotate.setVisibility(View.VISIBLE);
     }
 
@@ -416,7 +416,7 @@ public class EditorPage extends AppCompatActivity implements ChangePaintThicknes
         if (currentView != null) {
             currentView.setCrop();
             if (MyImageView.mHasBeenCropped || MyImageView.mHasBeenPainted || currentView.getRotationDegrees()%360!=0) {
-                mSave.startAnimation(animationEnter);
+                mSave.startAnimation(mAnimationEnter);
                 mSave.setVisibility(View.VISIBLE);
             }
         }
@@ -429,7 +429,7 @@ public class EditorPage extends AppCompatActivity implements ChangePaintThicknes
         if (currentView != null) {
             currentView.cancelCrop();
             if (MyImageView.mHasBeenCropped || MyImageView.mHasBeenPainted || currentView.getRotationDegrees()%360!=0) {
-                mSave.startAnimation(animationEnter);
+                mSave.startAnimation(mAnimationEnter);
                 mSave.setVisibility(View.VISIBLE);
             }
         }
@@ -451,11 +451,11 @@ public class EditorPage extends AppCompatActivity implements ChangePaintThicknes
     }
 
     public static ActionBar getMyActionBar() {
-        return actionBar;
+        return mActionBar;
     }
 
     private void load(String info) {
-        actionBar.setTitle(info);
+        mActionBar.setTitle(info);
     }
 
     private String setTransition() {
@@ -480,13 +480,13 @@ public class EditorPage extends AppCompatActivity implements ChangePaintThicknes
     }
 
     private void enterEditMode() {
-        mEdit.startAnimation(animationExit);
+        mEdit.startAnimation(mAnimationExit);
         mEdit.setVisibility(View.GONE);
-        mCrop.startAnimation(animationEnter);
+        mCrop.startAnimation(mAnimationEnter);
         mCrop.setVisibility(View.VISIBLE);
-        mPaint.startAnimation(animationEnter);
+        mPaint.startAnimation(mAnimationEnter);
         mPaint.setVisibility(View.VISIBLE);
-        mRotate.startAnimation(animationEnter);
+        mRotate.startAnimation(mAnimationEnter);
         mRotate.setVisibility(View.VISIBLE);
 
         MyImageView currentImage = getCurrentView();
@@ -495,22 +495,22 @@ public class EditorPage extends AppCompatActivity implements ChangePaintThicknes
             mViewPager.disableScroll(true);
         }
 
-        actionBar.hide();
+        mActionBar.hide();
     }
 
     private void exitEditMode() {
         MyImageView.mHasBeenPainted = false;
         MyImageView.mHasBeenCropped = false;
-        mEdit.startAnimation(animationEnter);
+        mEdit.startAnimation(mAnimationEnter);
         mEdit.setVisibility(View.VISIBLE);
-        mCrop.startAnimation(animationExit);
+        mCrop.startAnimation(mAnimationExit);
         mCrop.setVisibility(View.GONE);
-        mPaint.startAnimation(animationExit);
+        mPaint.startAnimation(mAnimationExit);
         mPaint.setVisibility(View.GONE);
         if (mSave.getVisibility() == View.VISIBLE)
-            mSave.startAnimation(animationExit);
+            mSave.startAnimation(mAnimationExit);
         mSave.setVisibility(View.GONE);
-        mRotate.startAnimation(animationExit);
+        mRotate.startAnimation(mAnimationExit);
         mRotate.setVisibility(View.GONE);
 
 
@@ -522,7 +522,7 @@ public class EditorPage extends AppCompatActivity implements ChangePaintThicknes
             mViewPager.disableScroll(false);
         }
 
-        actionBar.show();
+        mActionBar.show();
     }
 
     private void vibrate() {

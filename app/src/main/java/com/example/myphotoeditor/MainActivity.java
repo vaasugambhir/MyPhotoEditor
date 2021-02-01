@@ -29,7 +29,6 @@ public class MainActivity extends AppCompatActivity {
     private RecyclerView mImageList;
     private ImageAdapter mAdapter;
     private String mChosenFolder;
-    public boolean ALL_IMAGE_MODE = false;
 
     public static int position = 0;
     private static ArrayList<String> mFilePaths, mFileNames;
@@ -41,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         Intent intent = getIntent();
-        if (intent!=null)
+        if (intent != null)
             mChosenFolder = intent.getExtras().getString(Constants.CHOSEN_FOLDER);
 
         Toolbar toolbar = findViewById(R.id.toolbar);
@@ -148,10 +147,7 @@ public class MainActivity extends AppCompatActivity {
     @RequiresApi(api = Build.VERSION_CODES.Q)
     private void fetchingData() {
         Map<String, ArrayList<String>> map = ReadInternalImages.getImageAndAlbums(this);
-        if (!ALL_IMAGE_MODE)
-            mFilePaths = map.get(Constants.MY_DIRECTORY);
-        else
-            mFilePaths = ReadInternalImages.getImageList(this);
+        mFilePaths = map.get(Constants.MY_DIRECTORY);
         mImageFolder.setText(Constants.MY_DIRECTORY);
         mFileNames = new ArrayList<>();
         for (String path : mFilePaths) {
@@ -164,11 +160,8 @@ public class MainActivity extends AppCompatActivity {
         mAdapter = new ImageAdapter(this);
         if (mChosenFolder.equals(Constants.ALL_IMAGES)) {
             mFilePaths = FolderActivity.getAllImages();
-            ALL_IMAGE_MODE = true;
-        }
-        else {
+        } else {
             mFilePaths = FolderActivity.getChosenImages();
-            ALL_IMAGE_MODE = false;
         }
         mFileNames = new ArrayList<>();
         for (String path : mFilePaths) {
