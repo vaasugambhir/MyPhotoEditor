@@ -145,6 +145,12 @@ public class EditorPage extends AppCompatActivity implements ChangePaintThicknes
                 imageView.disablePaintMode();
                 imageView.disableCropMode();
             } else {
+                if (mSaved) {
+                    String load = "Loading the album";
+                    Toast toast = Toast.makeText(this, load, Toast.LENGTH_SHORT);
+                    toast.setGravity(Gravity.CENTER, 0, 0);
+                    toast.show();
+                }
                 super.onBackPressed();
                 finishAfterTransition();
             }

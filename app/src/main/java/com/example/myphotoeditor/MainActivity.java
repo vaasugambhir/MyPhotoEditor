@@ -15,9 +15,11 @@ import android.os.Build;
 import android.os.Bundle;
 import android.transition.Fade;
 import android.transition.Transition;
+import android.view.Gravity;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Map;
@@ -135,7 +137,6 @@ public class MainActivity extends AppCompatActivity {
                 if (requestCode == Constants.REQUEST_CODE) {
                     fetchingData();
                     mAdapter.add(mFilePaths, mFileNames);
-                    mAdapter.notifyItemInserted(0);
                     mAdapter.notifyDataSetChanged();
                     mImageList.scrollToPosition(0);
                 }
