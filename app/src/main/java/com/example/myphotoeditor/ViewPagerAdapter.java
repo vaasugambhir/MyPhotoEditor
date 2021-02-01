@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -49,12 +50,13 @@ public class ViewPagerAdapter extends PagerAdapter {
     @NonNull
     @Override
     public Object instantiateItem(@NonNull ViewGroup container, int position) {
-        MyImageView image = new MyImageView(mContext);
-        image.setScaleType(ImageView.ScaleType.FIT_CENTER);
+
+        LayoutInflater inflater = LayoutInflater.from(mContext);
+        View view = inflater.inflate(R.layout.view_pager_layout, container, false);
+        MyImageView image = view.findViewById(R.id.imageView_myView);
+        ViewCompat.setTransitionName(image, mFilePaths.get(position));
         image.setPath(mFilePaths.get(position));
         image.setTag(position);
-        ViewCompat.setTransitionName(image, mFilePaths.get(position));
-
         Glide.with(mContext)
                 .load(mFilePaths.get(position))
                 .dontAnimate()
