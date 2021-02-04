@@ -13,6 +13,8 @@ import android.app.SharedElementCallback;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.ColorMatrix;
+import android.graphics.ColorMatrixColorFilter;
 import android.graphics.RectF;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
@@ -29,6 +31,7 @@ import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
+import android.widget.SeekBar;
 import android.widget.Toast;
 
 import java.io.File;
@@ -45,11 +48,14 @@ public class EditorPage extends AppCompatActivity implements ChangePaintThicknes
     private static ActionBar mActionBar;
     private ArrayList<String> mFileNames;
     private MyViewPager mViewPager;
-    private Button mEdit, mPaint, mRotate, mChooseColor, mChooseThickness, mSave, mDone, mCancel, mCrop, mSetCrop, mCancelCrop, mUndo;
+    private Button mEdit, mPaint, mRotate, mChooseColor, mChooseThickness, mSave, mDone, mCancel, mCrop, mSetCrop, mCancelCrop, mUndo
+            ,mChangeBrightnessContrast;
     private int mDefColor;
     private Bitmap mCurrentBitmap;
     public static boolean mSaved, mWasSaved;
     private Animation mAnimationEnter, mAnimationExit;
+    private SeekBar mChangeBrightness, mChangeContrast;
+    private float mCurrentBrightness, mCurrentContrast;
 
     // OVERRIDDEN METHODS
     @SuppressLint("ClickableViewAccessibility")
@@ -63,6 +69,9 @@ public class EditorPage extends AppCompatActivity implements ChangePaintThicknes
         mAnimationExit = AnimationUtils.loadAnimation(this, R.anim.top_to_bottom);
         mSaved = false;
         mWasSaved = false;
+
+        mCurrentBrightness = 127f;
+        mCurrentContrast = 1f;
 
 //        Window w = getWindow();
 //        w.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
@@ -87,8 +96,49 @@ public class EditorPage extends AppCompatActivity implements ChangePaintThicknes
 
         load(setTransition());
 
-        loadButtons();
+        loadButtonsAndSeekBar();
+        setSeekBarActions();
         setMyViewPager();
+    }
+
+    private void setSeekBarActions() {
+        mChangeBrightness.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                MyImageView imageView = getCurrentView();
+                if (imageView!=null) {
+                    mCurrentBrightness = progress-127;
+                    imageView.setColorFilter(setContrast(mCurrentContrast, mCurrentBrightness));
+                }
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+            }
+        });
+
+        mChangeContrast.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                MyImageView imageView = getCurrentView();
+                if (imageView!=null) {
+                    mCurrentContrast = progress/100f;
+                    imageView.setColorFilter(setContrast(mCurrentContrast, mCurrentBrightness));
+                }
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+            }
+        });
     }
 
     private void setMyViewPager() {
@@ -336,6 +386,8 @@ public class EditorPage extends AppCompatActivity implements ChangePaintThicknes
         mSave.setVisibility(View.GONE);
         mCrop.startAnimation(mAnimationExit);
         mCrop.setVisibility(View.GONE);
+        mChangeBrightnessContrast.startAnimation(mAnimationExit);
+        mChangeBrightnessContrast.setVisibility(View.GONE);
         mPaint.startAnimation(mAnimationExit);
         mPaint.setVisibility(View.GONE);
         mRotate.startAnimation(mAnimationExit);
@@ -355,6 +407,8 @@ public class EditorPage extends AppCompatActivity implements ChangePaintThicknes
         mDone.setVisibility(View.GONE);
         mCrop.startAnimation(mAnimationEnter);
         mCrop.setVisibility(View.VISIBLE);
+        mChangeBrightnessContrast.startAnimation(mAnimationEnter);
+        mChangeBrightnessContrast.setVisibility(View.VISIBLE);
         mPaint.startAnimation(mAnimationEnter);
         mPaint.setVisibility(View.VISIBLE);
         mRotate.startAnimation(mAnimationEnter);
@@ -371,6 +425,8 @@ public class EditorPage extends AppCompatActivity implements ChangePaintThicknes
         mSave.setVisibility(View.GONE);
         mCrop.startAnimation(mAnimationExit);
         mCrop.setVisibility(View.GONE);
+        mChangeBrightnessContrast.startAnimation(mAnimationExit);
+        mChangeBrightnessContrast.setVisibility(View.GONE);
         mPaint.startAnimation(mAnimationExit);
         mPaint.setVisibility(View.GONE);
         mRotate.startAnimation(mAnimationExit);
@@ -384,6 +440,8 @@ public class EditorPage extends AppCompatActivity implements ChangePaintThicknes
         mCancelCrop.setVisibility(View.GONE);
         mCrop.startAnimation(mAnimationEnter);
         mCrop.setVisibility(View.VISIBLE);
+        mChangeBrightnessContrast.startAnimation(mAnimationEnter);
+        mChangeBrightnessContrast.setVisibility(View.VISIBLE);
         mPaint.startAnimation(mAnimationEnter);
         mPaint.setVisibility(View.VISIBLE);
         mRotate.startAnimation(mAnimationEnter);
@@ -441,7 +499,7 @@ public class EditorPage extends AppCompatActivity implements ChangePaintThicknes
         }
     }
 
-    private void loadButtons() {
+    private void loadButtonsAndSeekBar() {
         mEdit = findViewById(R.id.button_edit);
         mPaint = findViewById(R.id.paint);
         mRotate = findViewById(R.id.rotate);
@@ -454,6 +512,11 @@ public class EditorPage extends AppCompatActivity implements ChangePaintThicknes
         mCancelCrop = findViewById(R.id.cancelCrop);
         mUndo = findViewById(R.id.button_undo);
         mChooseThickness = findViewById(R.id.button_changeThickness);
+        mChangeBrightnessContrast = findViewById(R.id.button_changeBrightnessContrast);
+        mChangeBrightness = findViewById(R.id.seekBar_changeBrightness);
+        mChangeContrast = findViewById(R.id.seekBar_changeContrast);
+        mChangeBrightness.bringToFront();
+        mChangeContrast.bringToFront();
     }
 
     public static ActionBar getMyActionBar() {
@@ -490,6 +553,8 @@ public class EditorPage extends AppCompatActivity implements ChangePaintThicknes
         mEdit.setVisibility(View.GONE);
         mCrop.startAnimation(mAnimationEnter);
         mCrop.setVisibility(View.VISIBLE);
+        mChangeBrightnessContrast.startAnimation(mAnimationEnter);
+        mChangeBrightnessContrast.setVisibility(View.VISIBLE);
         mPaint.startAnimation(mAnimationEnter);
         mPaint.setVisibility(View.VISIBLE);
         mRotate.startAnimation(mAnimationEnter);
@@ -511,6 +576,8 @@ public class EditorPage extends AppCompatActivity implements ChangePaintThicknes
         mEdit.setVisibility(View.VISIBLE);
         mCrop.startAnimation(mAnimationExit);
         mCrop.setVisibility(View.GONE);
+        mChangeBrightnessContrast.startAnimation(mAnimationExit);
+        mChangeBrightnessContrast.setVisibility(View.GONE);
         mPaint.startAnimation(mAnimationExit);
         mPaint.setVisibility(View.GONE);
         if (mSave.getVisibility() == View.VISIBLE)
@@ -555,5 +622,35 @@ public class EditorPage extends AppCompatActivity implements ChangePaintThicknes
             ChangePaintThicknessDialog dialog = new ChangePaintThicknessDialog(mDefColor, imageView.getCurrentPaintThickness());
             dialog.show(getSupportFragmentManager(), "Change Thickness");
         }
+    }
+
+    public void changeBrightnessContrast(View view) {
+        vibrate();
+        mChangeContrast.startAnimation(mAnimationEnter);
+        mChangeContrast.setVisibility(View.VISIBLE);
+        mChangeBrightness.startAnimation(mAnimationEnter);
+        mChangeBrightness.setVisibility(View.VISIBLE);
+        mSave.startAnimation(mAnimationExit);
+        mSave.setVisibility(View.GONE);
+        mCrop.startAnimation(mAnimationExit);
+        mCrop.setVisibility(View.GONE);
+        mChangeBrightnessContrast.startAnimation(mAnimationExit);
+        mChangeBrightnessContrast.setVisibility(View.GONE);
+        mPaint.startAnimation(mAnimationExit);
+        mPaint.setVisibility(View.GONE);
+        mRotate.startAnimation(mAnimationExit);
+        mRotate.setVisibility(View.GONE);
+    }
+
+    public ColorMatrixColorFilter setContrast(float contrast, float brightness) {
+        ColorMatrix cm = new ColorMatrix(new float[]
+                {
+                        contrast, 0       , 0       , 0, brightness,
+                        0       , contrast, 0       , 0, brightness,
+                        0       , 0       , contrast, 0, brightness,
+                        0       , 0       , 0       , 1, 0
+                });
+
+        return new ColorMatrixColorFilter(cm);
     }
 }

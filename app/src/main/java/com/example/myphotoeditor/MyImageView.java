@@ -6,6 +6,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.ColorMatrix;
+import android.graphics.ColorMatrixColorFilter;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Path;
@@ -698,5 +700,14 @@ public class MyImageView extends androidx.appcompat.widget.AppCompatImageView im
     public void disableCropMode() {
         mCropMode = false;
         postInvalidate();
+    }
+
+    public void takeImageSnap() {
+        RectF rect = getImageRect();
+        this.setDrawingCacheEnabled(true);
+        this.buildDrawingCache();
+        Bitmap bmp = Bitmap.createBitmap(this.getDrawingCache(), (int) rect.left, (int) rect.top, (int) rect.width(), (int) rect.height());
+        this.setDrawingCacheEnabled(false);
+        this.setImageBitmap(bmp);
     }
 }
