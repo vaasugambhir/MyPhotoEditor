@@ -31,7 +31,9 @@ import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.SeekBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.File;
@@ -52,6 +54,8 @@ public class EditorPage extends AppCompatActivity implements ChangePaintThicknes
             ,mChangeBrightnessContrast, mDoneCB, mCancelCB;
     private int mDefColor;
     private Bitmap mCurrentBitmap;
+    private TextView mContrastTV, mBrightnessTV;
+    private LinearLayout mBG;
     private boolean mCBMode = false;
     public static boolean mSaved, mWasSaved;
     private Animation mAnimationEnter, mAnimationExit;
@@ -70,6 +74,9 @@ public class EditorPage extends AppCompatActivity implements ChangePaintThicknes
         mAnimationExit = AnimationUtils.loadAnimation(this, R.anim.top_to_bottom);
         mSaved = false;
         mWasSaved = false;
+
+        mCurrentBrightness = 127f;
+        mCurrentContrast = 1f;
 
         mPrevBrightness = 127f;
         mPrevContrast = 1f;
@@ -97,7 +104,7 @@ public class EditorPage extends AppCompatActivity implements ChangePaintThicknes
 
         load(setTransition());
 
-        loadButtonsAndSeekBar();
+        loadViews();
         setSeekBarActions();
         setMyViewPager();
     }
@@ -503,7 +510,7 @@ public class EditorPage extends AppCompatActivity implements ChangePaintThicknes
         }
     }
 
-    private void loadButtonsAndSeekBar() {
+    private void loadViews() {
         mEdit = findViewById(R.id.button_edit);
         mPaint = findViewById(R.id.paint);
         mRotate = findViewById(R.id.rotate);
@@ -521,6 +528,12 @@ public class EditorPage extends AppCompatActivity implements ChangePaintThicknes
         mCancelCB = findViewById(R.id.button_cancelCB);
         mChangeBrightness = findViewById(R.id.seekBar_changeBrightness);
         mChangeContrast = findViewById(R.id.seekBar_changeContrast);
+        mContrastTV = findViewById(R.id.textView_contrast);
+        mBrightnessTV = findViewById(R.id.textView_brightness);
+        mBG = findViewById(R.id.linearLayout_bg);
+        mBG.bringToFront();
+        mContrastTV.bringToFront();
+        mBrightnessTV.bringToFront();
         mChangeBrightness.bringToFront();
         mChangeContrast.bringToFront();
     }
@@ -549,8 +562,8 @@ public class EditorPage extends AppCompatActivity implements ChangePaintThicknes
         vibrate();
         mCurrentBrightness = 127f;
         mCurrentContrast = 1f;
-        mChangeBrightness.setProgress((int) mCurrentBrightness);
-        mChangeContrast.setProgress((int) mCurrentContrast);
+        mChangeBrightness.setProgress(127);
+        mChangeContrast.setProgress(100);
         if (getCurrentView() != null) {
             mCurrentBitmap = Bitmap.createBitmap(getCurrentView().getImageBitmap());
             getCurrentView().resetDegrees();
@@ -645,6 +658,12 @@ public class EditorPage extends AppCompatActivity implements ChangePaintThicknes
         mDoneCB.setVisibility(View.VISIBLE);
         mCancelCB.startAnimation(mAnimationEnter);
         mCancelCB.setVisibility(View.VISIBLE);
+        mBrightnessTV.startAnimation(mAnimationEnter);
+        mBrightnessTV.setVisibility(View.VISIBLE);
+        mBG.startAnimation(mAnimationEnter);
+        mBG.setVisibility(View.VISIBLE);
+        mContrastTV.startAnimation(mAnimationEnter);
+        mContrastTV.setVisibility(View.VISIBLE);
         mSave.startAnimation(mAnimationExit);
         mSave.setVisibility(View.GONE);
         mCrop.startAnimation(mAnimationExit);
@@ -667,6 +686,12 @@ public class EditorPage extends AppCompatActivity implements ChangePaintThicknes
         mDoneCB.setVisibility(View.GONE);
         mCancelCB.startAnimation(mAnimationExit);
         mCancelCB.setVisibility(View.GONE);
+        mBrightnessTV.startAnimation(mAnimationExit);
+        mBrightnessTV.setVisibility(View.GONE);
+        mBG.startAnimation(mAnimationExit);
+        mBG.setVisibility(View.GONE);
+        mContrastTV.startAnimation(mAnimationExit);
+        mContrastTV.setVisibility(View.GONE);
         mSave.startAnimation(mAnimationEnter);
         mSave.setVisibility(View.VISIBLE);
         mCrop.startAnimation(mAnimationEnter);
@@ -694,6 +719,8 @@ public class EditorPage extends AppCompatActivity implements ChangePaintThicknes
 
     public void changeBrightnessContrast(View view) {
         vibrate();
+        mChangeContrast.setProgress((int) (mPrevContrast*100));
+        mChangeBrightness.setProgress((int) mPrevBrightness);
         enterContrastBrightnessChangeMode();
     }
 
