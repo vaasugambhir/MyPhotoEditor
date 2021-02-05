@@ -562,6 +562,8 @@ public class EditorPage extends AppCompatActivity implements ChangePaintThicknes
         vibrate();
         mCurrentBrightness = 127f;
         mCurrentContrast = 1f;
+        mPrevBrightness = 127f;
+        mPrevContrast = 1f;
         mChangeBrightness.setProgress(127);
         mChangeContrast.setProgress(100);
         if (getCurrentView() != null) {
@@ -609,10 +611,9 @@ public class EditorPage extends AppCompatActivity implements ChangePaintThicknes
         mRotate.startAnimation(mAnimationExit);
         mRotate.setVisibility(View.GONE);
 
-
         MyImageView currentImage = getCurrentView();
         if (currentImage != null) {
-            currentImage.setColorFilter(setContrastAndBrightness(1, 0));
+            currentImage.setColorFilter(setContrastAndBrightness(1, 127));
             currentImage.setRotation(0);
             currentImage.setImageBitmap(mCurrentBitmap);
             currentImage.setEditingMode(false);
@@ -692,8 +693,10 @@ public class EditorPage extends AppCompatActivity implements ChangePaintThicknes
         mBG.setVisibility(View.GONE);
         mContrastTV.startAnimation(mAnimationExit);
         mContrastTV.setVisibility(View.GONE);
-        mSave.startAnimation(mAnimationEnter);
-        mSave.setVisibility(View.VISIBLE);
+        if (mCurrentBrightness != 127 || mCurrentContrast != 1) {
+            mSave.startAnimation(mAnimationEnter);
+            mSave.setVisibility(View.VISIBLE);
+        }
         mCrop.startAnimation(mAnimationEnter);
         mCrop.setVisibility(View.VISIBLE);
         mChangeBrightnessContrast.startAnimation(mAnimationEnter);
@@ -705,12 +708,14 @@ public class EditorPage extends AppCompatActivity implements ChangePaintThicknes
     }
 
     public void doneCB(View view) {
+        vibrate();
         mPrevContrast = mCurrentContrast;
         mPrevBrightness = mCurrentBrightness;
         exitContrastBrightnessChangeMode();
     }
 
     public void cancelCB(View view) {
+        vibrate();
         if (getCurrentView()!=null) {
             getCurrentView().setColorFilter(setContrastAndBrightness(mPrevContrast, mPrevBrightness));
         }

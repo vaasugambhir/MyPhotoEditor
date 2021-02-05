@@ -7,7 +7,7 @@ public class Constants {
     public final static String CHOSEN_FOLDER = "FOLDER";
     public final static String MY_DIRECTORY = "Photo Editor+";
     public final static String ALL_IMAGES = "All Images";
-    public final static long TRANSITION_DURATION = 150;
+    public final static long TRANSITION_DURATION = 250;
     public final static float EXIT_DISTANCE = 500f;
     public final static long VIBRATION_DURATION = 20;
     public final static long RETURN_ANIMATION_DURATION = 100;
