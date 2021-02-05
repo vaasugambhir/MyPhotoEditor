@@ -207,6 +207,34 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"/>
 
+    <Button
+        android:id="@+id/button_doneCB"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:text="done"
+        android:onClick="doneCB"
+        app:layout_constraintHorizontal_bias="0.15"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintVertical_bias="0.9"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+    <Button
+        android:id="@+id/button_cancelCB"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:text="cancel"
+        android:onClick="cancelCB"
+        app:layout_constraintHorizontal_bias="0.85"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintVertical_bias="0.9"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
+
     <com.example.myphotoeditor.MyViewPager
         android:id="@+id/image_viewPager"
         android:layout_width="match_parent"

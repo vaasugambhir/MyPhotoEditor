@@ -49,13 +49,14 @@ public class EditorPage extends AppCompatActivity implements ChangePaintThicknes
     private ArrayList<String> mFileNames;
     private MyViewPager mViewPager;
     private Button mEdit, mPaint, mRotate, mChooseColor, mChooseThickness, mSave, mDone, mCancel, mCrop, mSetCrop, mCancelCrop, mUndo
-            ,mChangeBrightnessContrast;
+            ,mChangeBrightnessContrast, mDoneCB, mCancelCB;
     private int mDefColor;
     private Bitmap mCurrentBitmap;
+    private boolean mCBMode = false;
     public static boolean mSaved, mWasSaved;
     private Animation mAnimationEnter, mAnimationExit;
     private SeekBar mChangeBrightness, mChangeContrast;
-    private float mCurrentBrightness, mCurrentContrast;
+    private float mCurrentBrightness, mCurrentContrast, mPrevBrightness, mPrevContrast;
 
     // OVERRIDDEN METHODS
     @SuppressLint("ClickableViewAccessibility")
@@ -70,8 +71,8 @@ public class EditorPage extends AppCompatActivity implements ChangePaintThicknes
         mSaved = false;
         mWasSaved = false;
 
-        mCurrentBrightness = 127f;
-        mCurrentContrast = 1f;
+        mPrevBrightness = 127f;
+        mPrevContrast = 1f;
 
 //        Window w = getWindow();
 //        w.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
@@ -107,8 +108,8 @@ public class EditorPage extends AppCompatActivity implements ChangePaintThicknes
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 MyImageView imageView = getCurrentView();
                 if (imageView!=null) {
-                    mCurrentBrightness = progress-127;
-                    imageView.setColorFilter(setContrast(mCurrentContrast, mCurrentBrightness));
+                    mCurrentBrightness = progress;
+                    imageView.setColorFilter(setContrastAndBrightness(mCurrentContrast, mCurrentBrightness));
                 }
             }
 
@@ -127,7 +128,7 @@ public class EditorPage extends AppCompatActivity implements ChangePaintThicknes
                 MyImageView imageView = getCurrentView();
                 if (imageView!=null) {
                     mCurrentContrast = progress/100f;
-                    imageView.setColorFilter(setContrast(mCurrentContrast, mCurrentBrightness));
+                    imageView.setColorFilter(setContrastAndBrightness(mCurrentContrast, mCurrentBrightness));
                 }
             }
 
@@ -189,6 +190,9 @@ public class EditorPage extends AppCompatActivity implements ChangePaintThicknes
             } else if (imageView.getCropMode()) {
                 exitCropMode();
                 imageView.disableCropMode();
+            } else if(mCBMode) {
+                imageView.setColorFilter(setContrastAndBrightness(mPrevContrast, mPrevBrightness));
+                exitContrastBrightnessChangeMode();
             } else if (imageView.getEditingMode()) {
                 imageView.resetDegrees();
                 exitEditMode();
@@ -513,6 +517,8 @@ public class EditorPage extends AppCompatActivity implements ChangePaintThicknes
         mUndo = findViewById(R.id.button_undo);
         mChooseThickness = findViewById(R.id.button_changeThickness);
         mChangeBrightnessContrast = findViewById(R.id.button_changeBrightnessContrast);
+        mDoneCB = findViewById(R.id.button_doneCB);
+        mCancelCB = findViewById(R.id.button_cancelCB);
         mChangeBrightness = findViewById(R.id.seekBar_changeBrightness);
         mChangeContrast = findViewById(R.id.seekBar_changeContrast);
         mChangeBrightness.bringToFront();
@@ -541,6 +547,10 @@ public class EditorPage extends AppCompatActivity implements ChangePaintThicknes
 
     public void edit(View view) {
         vibrate();
+        mCurrentBrightness = 127f;
+        mCurrentContrast = 1f;
+        mChangeBrightness.setProgress((int) mCurrentBrightness);
+        mChangeContrast.setProgress((int) mCurrentContrast);
         if (getCurrentView() != null) {
             mCurrentBitmap = Bitmap.createBitmap(getCurrentView().getImageBitmap());
             getCurrentView().resetDegrees();
@@ -589,6 +599,7 @@ public class EditorPage extends AppCompatActivity implements ChangePaintThicknes
 
         MyImageView currentImage = getCurrentView();
         if (currentImage != null) {
+            currentImage.setColorFilter(setContrastAndBrightness(1, 0));
             currentImage.setRotation(0);
             currentImage.setImageBitmap(mCurrentBitmap);
             currentImage.setEditingMode(false);
@@ -624,12 +635,16 @@ public class EditorPage extends AppCompatActivity implements ChangePaintThicknes
         }
     }
 
-    public void changeBrightnessContrast(View view) {
-        vibrate();
+    private void enterContrastBrightnessChangeMode() {
+        mCBMode = true;
         mChangeContrast.startAnimation(mAnimationEnter);
         mChangeContrast.setVisibility(View.VISIBLE);
         mChangeBrightness.startAnimation(mAnimationEnter);
         mChangeBrightness.setVisibility(View.VISIBLE);
+        mDoneCB.startAnimation(mAnimationEnter);
+        mDoneCB.setVisibility(View.VISIBLE);
+        mCancelCB.startAnimation(mAnimationEnter);
+        mCancelCB.setVisibility(View.VISIBLE);
         mSave.startAnimation(mAnimationExit);
         mSave.setVisibility(View.GONE);
         mCrop.startAnimation(mAnimationExit);
@@ -642,7 +657,48 @@ public class EditorPage extends AppCompatActivity implements ChangePaintThicknes
         mRotate.setVisibility(View.GONE);
     }
 
-    public ColorMatrixColorFilter setContrast(float contrast, float brightness) {
+    private void exitContrastBrightnessChangeMode() {
+        mCBMode = false;
+        mChangeContrast.startAnimation(mAnimationExit);
+        mChangeContrast.setVisibility(View.GONE);
+        mChangeBrightness.startAnimation(mAnimationExit);
+        mChangeBrightness.setVisibility(View.GONE);
+        mDoneCB.startAnimation(mAnimationExit);
+        mDoneCB.setVisibility(View.GONE);
+        mCancelCB.startAnimation(mAnimationExit);
+        mCancelCB.setVisibility(View.GONE);
+        mSave.startAnimation(mAnimationEnter);
+        mSave.setVisibility(View.VISIBLE);
+        mCrop.startAnimation(mAnimationEnter);
+        mCrop.setVisibility(View.VISIBLE);
+        mChangeBrightnessContrast.startAnimation(mAnimationEnter);
+        mChangeBrightnessContrast.setVisibility(View.VISIBLE);
+        mPaint.startAnimation(mAnimationEnter);
+        mPaint.setVisibility(View.VISIBLE);
+        mRotate.startAnimation(mAnimationEnter);
+        mRotate.setVisibility(View.VISIBLE);
+    }
+
+    public void doneCB(View view) {
+        mPrevContrast = mCurrentContrast;
+        mPrevBrightness = mCurrentBrightness;
+        exitContrastBrightnessChangeMode();
+    }
+
+    public void cancelCB(View view) {
+        if (getCurrentView()!=null) {
+            getCurrentView().setColorFilter(setContrastAndBrightness(mPrevContrast, mPrevBrightness));
+        }
+        exitContrastBrightnessChangeMode();
+    }
+
+    public void changeBrightnessContrast(View view) {
+        vibrate();
+        enterContrastBrightnessChangeMode();
+    }
+
+    public ColorMatrixColorFilter setContrastAndBrightness(float contrast, float brightness) {
+        brightness -= 127;
         ColorMatrix cm = new ColorMatrix(new float[]
                 {
                         contrast, 0       , 0       , 0, brightness,
