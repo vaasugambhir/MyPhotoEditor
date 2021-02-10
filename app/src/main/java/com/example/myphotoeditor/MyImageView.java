@@ -631,7 +631,7 @@ public class MyImageView extends androidx.appcompat.widget.AppCompatImageView im
             for (int i = 0; i < EditorPage.textViews.size(); i++) {
                 MyTextView tv = EditorPage.textViews.get(i);
                 Paint paint = paints.get(i);
-                canvas.drawText(tv.getTEXT(), tv.getX(), tv.getY(), paint);
+                canvas.drawText(tv.getTEXT(), tv.getX(), tv.getY() + tv.getBaseline(), paint);
             }
         }
 
