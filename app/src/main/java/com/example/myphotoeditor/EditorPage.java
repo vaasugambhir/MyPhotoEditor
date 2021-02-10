@@ -61,7 +61,7 @@ public class EditorPage extends AppCompatActivity implements ChangePaintThicknes
     private TextView mContrastTV, mBrightnessTV;
     private LinearLayout mBG;
     private boolean mCBMode = false;
-    private boolean mTextAdded = false;
+    private boolean mTextAdded = false, mAddedTextMode = false;
     public static boolean mSaved, mWasSaved;
     public static ArrayList<MyTextView> textViews;
     private Animation mAnimationEnter, mAnimationExit;
@@ -199,7 +199,14 @@ public class EditorPage extends AppCompatActivity implements ChangePaintThicknes
     public void onBackPressed() {
         MyImageView imageView = getCurrentView();
         if (imageView != null) {
-            if (imageView.getPaintMode()) {
+            if (mAddedTextMode) {
+                exitTextMode();
+                for (MyTextView myTextView : textViews) {
+                    layout.removeView(myTextView);
+                }
+                textViews.clear();
+            }
+            else if (imageView.getPaintMode()) {
                 exitPaintMode();
                 imageView.disablePaintMode();
             } else if (imageView.getCropMode()) {
@@ -781,6 +788,7 @@ public class EditorPage extends AppCompatActivity implements ChangePaintThicknes
     }
 
     private void enterTextMode() {
+        mAddedTextMode = true;
         mAddTextDone.startAnimation(mAnimationEnter);
         mAddTextDone.setVisibility(View.VISIBLE);
         mAddTextCancel.startAnimation(mAnimationEnter);
@@ -802,6 +810,7 @@ public class EditorPage extends AppCompatActivity implements ChangePaintThicknes
     }
 
     private void exitTextMode() {
+        mAddedTextMode = false;
         mAddTextDone.startAnimation(mAnimationExit);
         mAddTextDone.setVisibility(View.GONE);
         mAddTextCancel.startAnimation(mAnimationExit);

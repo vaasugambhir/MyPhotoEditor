@@ -1,6 +1,8 @@
 package com.example.myphotoeditor;
 
+import android.content.Context;
 import android.content.res.Resources;
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Build;
 import android.view.LayoutInflater;
@@ -10,13 +12,13 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 public class FontListAdapter extends RecyclerView.Adapter<FontListAdapter.ViewHolder> {
 
     private final String[] mFontNames;
     private final Typeface[] mFonts;
-    private int mSize, mColor;
     private final OnFontClickListener listener;
 
     @RequiresApi(api = Build.VERSION_CODES.O)
@@ -24,11 +26,6 @@ public class FontListAdapter extends RecyclerView.Adapter<FontListAdapter.ViewHo
         mFontNames = Constants.mFontNames;
         mFonts = Constants.getFonts(resources);
         listener = l;
-    }
-
-    public void add(int size, int color) {
-        mColor = color;
-        mSize = size;
     }
 
     @NonNull
@@ -42,9 +39,8 @@ public class FontListAdapter extends RecyclerView.Adapter<FontListAdapter.ViewHo
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         holder.fontItemList.setText(mFontNames[position]);
         holder.fontItemList.setTypeface(mFonts[position]);
-        holder.fontItemList.setTextColor(mColor);
-        holder.fontItemList.setTextSize(mSize);
-
+        holder.fontItemList.setTextColor(Color.WHITE);
+        holder.fontItemList.setTextSize(30);
         holder.fontItemList.setOnClickListener(v -> listener.onFontClick(position));
     }
 

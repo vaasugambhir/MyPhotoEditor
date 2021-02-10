@@ -46,7 +46,6 @@ public class AddTextDialog extends AppCompatDialogFragment {
     private final MyTextView mTvInFocus;
     private Typeface mCurrentFont;
     private final Typeface mDefFont;
-    private FontListAdapter mAdapter;
 
     AddTextDialog(Context context, String defText, int defColor, int defSize, MyTextView tvInFocus, Typeface defFont) {
         mDefText = defText;
@@ -117,15 +116,14 @@ public class AddTextDialog extends AppCompatDialogFragment {
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     private void setList() {
-        mAdapter = new FontListAdapter(getResources(), position -> {
+        FontListAdapter adapter = new FontListAdapter(getResources(), position -> {
             mCurrentFont = (Constants.getFonts(getResources()))[position];
             layout1.setVisibility(View.VISIBLE);
             layout2.setVisibility(View.GONE);
             mTextDisplay.setTypeface(mCurrentFont);
         });
-        mAdapter.add(mCurrentSize, mCurrentColor);
         mFontList.setLayoutManager(new LinearLayoutManager(mContext));
-        mFontList.setAdapter(mAdapter);
+        mFontList.setAdapter(adapter);
     }
 
     private void setDefValues() {
@@ -156,8 +154,6 @@ public class AddTextDialog extends AppCompatDialogFragment {
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-                mAdapter.add(mCurrentSize, mCurrentColor);
-                mAdapter.notifyDataSetChanged();
             }
         });
     }
@@ -179,8 +175,6 @@ public class AddTextDialog extends AppCompatDialogFragment {
                 @Override
                 public void onOk(AmbilWarnaDialog dialog, int color) {
                     mCurrentColor = color;
-                    mAdapter.add(mCurrentSize, mCurrentColor);
-                    mAdapter.notifyDataSetChanged();
                     mTextDisplay.setTextColor(mCurrentColor);
                 }
             });
