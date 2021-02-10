@@ -61,6 +61,7 @@ public class EditorPage extends AppCompatActivity implements ChangePaintThicknes
     private TextView mContrastTV, mBrightnessTV;
     private LinearLayout mBG;
     private boolean mCBMode = false;
+    private boolean mTextAdded = false;
     public static boolean mSaved, mWasSaved;
     public static ArrayList<MyTextView> textViews;
     private Animation mAnimationEnter, mAnimationExit;
@@ -808,9 +809,10 @@ public class EditorPage extends AppCompatActivity implements ChangePaintThicknes
         mAddText.setVisibility(View.GONE);
         mCrop.startAnimation(mAnimationEnter);
         mCrop.setVisibility(View.VISIBLE);
-        if (textViews.size() >= 1) {
+        if (textViews.size() >= 1 || mTextAdded) {
             mSave.startAnimation(mAnimationEnter);
             mSave.setVisibility(View.VISIBLE);
+            mTextAdded = true;
         }
         mAddTexts.startAnimation(mAnimationEnter);
         mAddTexts.setVisibility(View.VISIBLE);

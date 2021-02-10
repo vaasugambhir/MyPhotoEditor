@@ -67,6 +67,7 @@ public class MyImageView extends androidx.appcompat.widget.AppCompatImageView im
     // for button animations
     private Animation animationEnter, animationExit;
 
+    // for adding texts
     private boolean mCanPaintViews;
     private ArrayList<Paint> paints;
 
