@@ -622,6 +622,7 @@ public class EditorPage extends AppCompatActivity implements ChangePaintThicknes
     private void exitEditMode() {
         MyImageView.mHasBeenPainted = false;
         MyImageView.mHasBeenCropped = false;
+        mTextAdded = false;
         mEdit.startAnimation(mAnimationEnter);
         mEdit.setVisibility(View.VISIBLE);
         mAddTexts.startAnimation(mAnimationExit);
