@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal">
+
+    <LinearLayout
+        android:id="@+id/layout1"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/textView_addedText"
+            android:layout_width="wrap_content"
+            android:layout_height="100sp"
+            android:layout_gravity="center"
+            android:padding="20dp"
+            android:text="New Text"
+            android:textSize="30sp" />
+
+        <EditText
+            android:id="@+id/editText_addedText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:ems="10"
+            android:inputType="textPersonName"
+            android:padding="20dp"
+            android:text="New Text" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/button_chooseAddTextColor"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                android:padding="20dp"
+                android:text="choose color" />
+
+            <Button
+                android:id="@+id/button_chooseAddTextFont"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:padding="20dp"
+                android:layout_weight="1"
+                android:text="choose font" />
+
+        </LinearLayout>
+
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/special_transparent"
+            android:orientation="vertical" >
+
+            <TextView
+                android:id="@+id/textView_addedTextSizeCounter"
+                android:text="Size: 30"
+                android:textColor="@color/white"
+                android:textSize="25sp"
+                android:padding="10dp"
+                android:paddingStart="35dp"
+                android:paddingEnd="35dp"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"/>
+
+            <SeekBar
+                android:id="@+id/seekBar_chooseAddTextSize"
+                android:max="50"
+                android:min="10"
+                android:progress="30"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="30dp"/>
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/layout2"
+        android:orientation="vertical"
+        android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerView_fontList"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+
+    </LinearLayout>
+
+
+</LinearLayout>

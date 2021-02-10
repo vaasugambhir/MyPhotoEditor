@@ -22,6 +22,7 @@ import android.view.MotionEvent;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -67,6 +68,9 @@ public class MyImageView extends androidx.appcompat.widget.AppCompatImageView im
     // for button animations
     private Animation animationEnter, animationExit;
 
+    private boolean mCanPaintViews;
+    private ArrayList<Paint> paints;
+
     public MyImageView(@NonNull Context context) {
         super(context);
         init(context);
@@ -85,7 +89,9 @@ public class MyImageView extends androidx.appcompat.widget.AppCompatImageView im
     // MY METHODS
     private void init(Context context) {
         mContext = context;
+        paints = new ArrayList<>();
         mEditingMode = false;
+        mCanPaintViews = false;
         mScrolling = false;
         currentThickness = 10f;
         degrees = 0;
@@ -621,6 +627,14 @@ public class MyImageView extends androidx.appcompat.widget.AppCompatImageView im
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
 
+        if (mCanPaintViews) {
+            for (int i = 0; i < EditorPage.textViews.size(); i++) {
+                MyTextView tv = EditorPage.textViews.get(i);
+                Paint paint = paints.get(i);
+                canvas.drawText(tv.getTEXT(), tv.getX(), tv.getY(), paint);
+            }
+        }
+
         if (mCropMode) {
             canvas.drawRect(mCropRectangle, mRectPaint);
             canvas.drawRect(mCropOuterRect, mOuterRectPaint);
@@ -707,5 +721,21 @@ public class MyImageView extends androidx.appcompat.widget.AppCompatImageView im
         Bitmap bmp = Bitmap.createBitmap(this.getDrawingCache(), (int) rect.left, (int) rect.top, (int) rect.width(), (int) rect.height());
         this.setDrawingCacheEnabled(false);
         this.setImageBitmap(bmp);
+    }
+
+    public void startPaint() {
+        for (MyTextView textView : EditorPage.textViews) {
+            Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
+            paint.setTypeface(textView.getTypeface());
+            paint.setColor(textView.getCOLOR());
+            paint.setTextSize(textView.getSIZE());
+            paints.add(paint);
+        }
+        mCanPaintViews = true;
+        postInvalidate();
+    }
+
+    public void clearPaints() {
+        paints.clear();
     }
 }

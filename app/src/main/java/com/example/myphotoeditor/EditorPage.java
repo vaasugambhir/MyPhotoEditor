@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
 import androidx.core.view.ViewCompat;
 import androidx.viewpager.widget.ViewPager;
@@ -16,6 +17,7 @@ import android.graphics.Bitmap;
 import android.graphics.ColorMatrix;
 import android.graphics.ColorMatrixColorFilter;
 import android.graphics.RectF;
+import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
@@ -28,6 +30,7 @@ import android.transition.Fade;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
@@ -44,20 +47,22 @@ import java.util.Map;
 
 import yuku.ambilwarna.AmbilWarnaDialog;
 
-public class EditorPage extends AppCompatActivity implements ChangePaintThicknessDialog.ChangePaintThicknessDialogListener {
+public class EditorPage extends AppCompatActivity implements ChangePaintThicknessDialog.ChangePaintThicknessDialogListener, OnAddTextListener {
 
     // FIELDS
     private static ActionBar mActionBar;
+    private ConstraintLayout layout;
     private ArrayList<String> mFileNames;
     private MyViewPager mViewPager;
     private Button mEdit, mPaint, mRotate, mChooseColor, mChooseThickness, mSave, mDone, mCancel, mCrop, mSetCrop, mCancelCrop, mUndo
-            ,mChangeBrightnessContrast, mDoneCB, mCancelCB;
+            ,mChangeBrightnessContrast, mDoneCB, mCancelCB, mAddTexts, mAddText, mAddTextDone, mAddTextCancel;
     private int mDefColor;
     private Bitmap mCurrentBitmap;
     private TextView mContrastTV, mBrightnessTV;
     private LinearLayout mBG;
     private boolean mCBMode = false;
     public static boolean mSaved, mWasSaved;
+    public static ArrayList<MyTextView> textViews;
     private Animation mAnimationEnter, mAnimationExit;
     private SeekBar mChangeBrightness, mChangeContrast;
     private float mCurrentBrightness, mCurrentContrast, mPrevBrightness, mPrevContrast;
@@ -101,6 +106,8 @@ public class EditorPage extends AppCompatActivity implements ChangePaintThicknes
         fade.excludeTarget(android.R.id.navigationBarBackground, true);
         getWindow().setEnterTransition(fade);
         getWindow().setExitTransition(fade);
+
+        textViews = new ArrayList<>();
 
         load(setTransition());
 
@@ -391,6 +398,8 @@ public class EditorPage extends AppCompatActivity implements ChangePaintThicknes
         mChooseColor.setVisibility(View.VISIBLE);
         mChooseThickness.startAnimation(mAnimationEnter);
         mChooseThickness.setVisibility(View.VISIBLE);
+        mAddTexts.startAnimation(mAnimationExit);
+        mAddTexts.setVisibility(View.GONE);
         mCancel.startAnimation(mAnimationEnter);
         mCancel.setVisibility(View.VISIBLE);
         mSave.startAnimation(mAnimationExit);
@@ -410,6 +419,8 @@ public class EditorPage extends AppCompatActivity implements ChangePaintThicknes
         mChooseColor.setVisibility(View.GONE);
         mChooseThickness.startAnimation(mAnimationExit);
         mChooseThickness.setVisibility(View.GONE);
+        mAddTexts.startAnimation(mAnimationEnter);
+        mAddTexts.setVisibility(View.VISIBLE);
         mCancel.startAnimation(mAnimationExit);
         mCancel.setVisibility(View.GONE);
         mUndo.startAnimation(mAnimationExit);
@@ -434,6 +445,8 @@ public class EditorPage extends AppCompatActivity implements ChangePaintThicknes
         mSetCrop.setVisibility(View.VISIBLE);
         mSave.startAnimation(mAnimationExit);
         mSave.setVisibility(View.GONE);
+        mAddTexts.startAnimation(mAnimationExit);
+        mAddTexts.setVisibility(View.GONE);
         mCrop.startAnimation(mAnimationExit);
         mCrop.setVisibility(View.GONE);
         mChangeBrightnessContrast.startAnimation(mAnimationExit);
@@ -449,6 +462,8 @@ public class EditorPage extends AppCompatActivity implements ChangePaintThicknes
         mSetCrop.setVisibility(View.GONE);
         mCancelCrop.startAnimation(mAnimationExit);
         mCancelCrop.setVisibility(View.GONE);
+        mAddTexts.startAnimation(mAnimationEnter);
+        mAddTexts.setVisibility(View.VISIBLE);
         mCrop.startAnimation(mAnimationEnter);
         mCrop.setVisibility(View.VISIBLE);
         mChangeBrightnessContrast.startAnimation(mAnimationEnter);
@@ -511,6 +526,7 @@ public class EditorPage extends AppCompatActivity implements ChangePaintThicknes
     }
 
     private void loadViews() {
+        layout = findViewById(R.id.activity);
         mEdit = findViewById(R.id.button_edit);
         mPaint = findViewById(R.id.paint);
         mRotate = findViewById(R.id.rotate);
@@ -531,6 +547,12 @@ public class EditorPage extends AppCompatActivity implements ChangePaintThicknes
         mContrastTV = findViewById(R.id.textView_contrast);
         mBrightnessTV = findViewById(R.id.textView_brightness);
         mBG = findViewById(R.id.linearLayout_bg);
+
+        mAddTexts = findViewById(R.id.button_addTexts);
+        mAddText = findViewById(R.id.button_addText);
+        mAddTextCancel = findViewById(R.id.button_addTextCancel);
+        mAddTextDone = findViewById(R.id.button_addTextDone);
+
         mBG.bringToFront();
         mContrastTV.bringToFront();
         mBrightnessTV.bringToFront();
@@ -584,6 +606,8 @@ public class EditorPage extends AppCompatActivity implements ChangePaintThicknes
         mPaint.setVisibility(View.VISIBLE);
         mRotate.startAnimation(mAnimationEnter);
         mRotate.setVisibility(View.VISIBLE);
+        mAddTexts.startAnimation(mAnimationEnter);
+        mAddTexts.setVisibility(View.VISIBLE);
 
         MyImageView currentImage = getCurrentView();
         if (currentImage != null) {
@@ -599,6 +623,8 @@ public class EditorPage extends AppCompatActivity implements ChangePaintThicknes
         MyImageView.mHasBeenCropped = false;
         mEdit.startAnimation(mAnimationEnter);
         mEdit.setVisibility(View.VISIBLE);
+        mAddTexts.startAnimation(mAnimationExit);
+        mAddTexts.setVisibility(View.GONE);
         mCrop.startAnimation(mAnimationExit);
         mCrop.setVisibility(View.GONE);
         mChangeBrightnessContrast.startAnimation(mAnimationExit);
@@ -659,6 +685,8 @@ public class EditorPage extends AppCompatActivity implements ChangePaintThicknes
         mDoneCB.setVisibility(View.VISIBLE);
         mCancelCB.startAnimation(mAnimationEnter);
         mCancelCB.setVisibility(View.VISIBLE);
+        mAddTexts.startAnimation(mAnimationExit);
+        mAddTexts.setVisibility(View.GONE);
         mBrightnessTV.startAnimation(mAnimationEnter);
         mBrightnessTV.setVisibility(View.VISIBLE);
         mBG.startAnimation(mAnimationEnter);
@@ -685,6 +713,8 @@ public class EditorPage extends AppCompatActivity implements ChangePaintThicknes
         mChangeBrightness.setVisibility(View.GONE);
         mDoneCB.startAnimation(mAnimationExit);
         mDoneCB.setVisibility(View.GONE);
+        mAddTexts.startAnimation(mAnimationEnter);
+        mAddTexts.setVisibility(View.VISIBLE);
         mCancelCB.startAnimation(mAnimationExit);
         mCancelCB.setVisibility(View.GONE);
         mBrightnessTV.startAnimation(mAnimationExit);
@@ -736,9 +766,121 @@ public class EditorPage extends AppCompatActivity implements ChangePaintThicknes
                         contrast, 0       , 0       , 0, brightness,
                         0       , contrast, 0       , 0, brightness,
                         0       , 0       , contrast, 0, brightness,
-                        0       , 0       , 0       , 1, 0
+                        0       , 0       , 0       , 1,          0
                 });
 
         return new ColorMatrixColorFilter(cm);
+    }
+
+    public void addText(View view) {
+        vibrate();
+        AddTextDialog dialog = new AddTextDialog(this, "New Text", ContextCompat.getColor(this, R.color.white), 30, null, null);
+        dialog.show(getSupportFragmentManager(), Constants.ADD_TAG);
+    }
+
+    private void enterTextMode() {
+        mAddTextDone.startAnimation(mAnimationEnter);
+        mAddTextDone.setVisibility(View.VISIBLE);
+        mAddTextCancel.startAnimation(mAnimationEnter);
+        mAddTextCancel.setVisibility(View.VISIBLE);
+        mAddText.startAnimation(mAnimationEnter);
+        mAddText.setVisibility(View.VISIBLE);
+        mCrop.startAnimation(mAnimationExit);
+        mCrop.setVisibility(View.GONE);
+        mSave.startAnimation(mAnimationExit);
+        mSave.setVisibility(View.GONE);
+        mAddTexts.startAnimation(mAnimationExit);
+        mAddTexts.setVisibility(View.GONE);
+        mChangeBrightnessContrast.startAnimation(mAnimationExit);
+        mChangeBrightnessContrast.setVisibility(View.GONE);
+        mPaint.startAnimation(mAnimationExit);
+        mPaint.setVisibility(View.GONE);
+        mRotate.startAnimation(mAnimationExit);
+        mRotate.setVisibility(View.GONE);
+    }
+
+    private void exitTextMode() {
+        mAddTextDone.startAnimation(mAnimationExit);
+        mAddTextDone.setVisibility(View.GONE);
+        mAddTextCancel.startAnimation(mAnimationExit);
+        mAddTextCancel.setVisibility(View.GONE);
+        mAddText.startAnimation(mAnimationExit);
+        mAddText.setVisibility(View.GONE);
+        mCrop.startAnimation(mAnimationEnter);
+        mCrop.setVisibility(View.VISIBLE);
+        if (textViews.size() >= 1) {
+            mSave.startAnimation(mAnimationEnter);
+            mSave.setVisibility(View.VISIBLE);
+        }
+        mAddTexts.startAnimation(mAnimationEnter);
+        mAddTexts.setVisibility(View.VISIBLE);
+        mChangeBrightnessContrast.startAnimation(mAnimationEnter);
+        mChangeBrightnessContrast.setVisibility(View.VISIBLE);
+        mPaint.startAnimation(mAnimationEnter);
+        mPaint.setVisibility(View.VISIBLE);
+        mRotate.startAnimation(mAnimationEnter);
+        mRotate.setVisibility(View.VISIBLE);
+    }
+
+    public void addTexts(View view) {
+        enterTextMode();
+        vibrate();
+    }
+
+    public void addTextCancel(View view) {
+        vibrate();
+        for (MyTextView myTextView : textViews) {
+            layout.removeView(myTextView);
+        }
+        textViews.clear();
+        exitTextMode();
+    }
+
+    public void addTextDone(View view) {
+        vibrate();
+        MyImageView imageView = getCurrentView();
+        if (imageView != null) {
+            imageView.startPaint();
+            imageView.takeImageSnap();
+            imageView.clearPaints();
+        }
+        for (MyTextView myTextView : textViews) {
+            layout.removeView(myTextView);
+        }
+        exitTextMode();
+        textViews.clear();
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    @Override
+    public void onTextAdded(String text, boolean deleted, int color, int size, MyTextView tvInFocus, Typeface font) {
+        MyTextView textView = new MyTextView(this);
+        textView.setText(text);
+        textView.setTextSize(size);
+        textView.setTextColor(color);
+        textView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        textView.setParams(text, color, size);
+
+        layout.addView(textView);
+        textView.setTypeface(font);
+        textViews.add(textView);
+        if (deleted) {
+            layout.removeView(textView);
+            textViews.remove(textView);
+        }
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    @Override
+    public void onTextUpdated(String text, boolean deleted, int color, int size, MyTextView textView, Typeface font) {
+        if (deleted) {
+            layout.removeView(textView);
+            textViews.remove(textView);
+        }
+        textView.setText(text);
+        textView.setTextSize(size);
+        textView.setTextColor(color);
+        textView.setParams(text, color, size);
+        textView.setTypeface(font);
     }
 }
