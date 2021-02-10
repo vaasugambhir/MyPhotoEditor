@@ -728,7 +728,8 @@ public class MyImageView extends androidx.appcompat.widget.AppCompatImageView im
             Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
             paint.setTypeface(textView.getTypeface());
             paint.setColor(textView.getCOLOR());
-            paint.setTextSize(textView.getSIZE());
+            paint.setTextSize(textView.getTextSize());
+            textView.getSIZE();
             paints.add(paint);
         }
         mCanPaintViews = true;
