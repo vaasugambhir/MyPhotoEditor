@@ -302,9 +302,14 @@ public class EditorPage extends AppCompatActivity implements ChangePaintThicknes
 
         MyImageView currentView = getCurrentView();
         if (currentView != null) {
-            BitmapDrawable drawable = (BitmapDrawable) currentView.getDrawable();
-            Bitmap bitmap = drawable.getBitmap();
-            saveImage(bitmap);
+
+            RectF rect = currentView.getImageRect();
+            currentView.setDrawingCacheEnabled(true);
+            currentView.buildDrawingCache();
+            Bitmap bmp = Bitmap.createBitmap(currentView.getDrawingCache(), (int) rect.left, (int) rect.top, (int) rect.width(), (int) rect.height());
+            currentView.setDrawingCacheEnabled(false);
+            currentView.setImageBitmap(bmp);
+            saveImage(bmp);
             saveToast.show();
         }
 
@@ -393,11 +398,13 @@ public class EditorPage extends AppCompatActivity implements ChangePaintThicknes
         MyImageView currentView = getCurrentView();
         exitPaintMode();
         if (currentView != null) {
+            currentView.setColorFilter(setContrastAndBrightness(1f, 127f));
             currentView.done();
             if (MyImageView.mHasBeenPainted || MyImageView.mHasBeenCropped || currentView.getRotationDegrees() % 360 != 0) {
                 mSave.startAnimation(mAnimationEnter);
                 mSave.setVisibility(View.VISIBLE);
             }
+            currentView.setColorFilter(setContrastAndBrightness(mCurrentContrast, mCurrentBrightness));
         }
     }
 
@@ -852,9 +859,11 @@ public class EditorPage extends AppCompatActivity implements ChangePaintThicknes
         vibrate();
         MyImageView imageView = getCurrentView();
         if (imageView != null) {
+            imageView.setColorFilter(setContrastAndBrightness(1f, 127f));
             imageView.startPaint();
             imageView.takeImageSnap();
             imageView.clearPaints();
+            imageView.setColorFilter(setContrastAndBrightness(mCurrentContrast, mCurrentBrightness));
         }
         for (MyTextView myTextView : textViews) {
             layout.removeView(myTextView);
