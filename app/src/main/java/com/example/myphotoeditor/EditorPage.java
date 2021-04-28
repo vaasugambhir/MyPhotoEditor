@@ -796,8 +796,7 @@ public class EditorPage extends AppCompatActivity implements ChangePaintThicknes
 
     private void enterTextMode() {
         mAddedTextMode = true;
-        mAddTextDone.startAnimation(mAnimationEnter);
-        mAddTextDone.setVisibility(View.VISIBLE);
+
         mAddTextCancel.startAnimation(mAnimationEnter);
         mAddTextCancel.setVisibility(View.VISIBLE);
         mAddText.startAnimation(mAnimationEnter);
@@ -818,8 +817,10 @@ public class EditorPage extends AppCompatActivity implements ChangePaintThicknes
 
     private void exitTextMode() {
         mAddedTextMode = false;
-        mAddTextDone.startAnimation(mAnimationExit);
-        mAddTextDone.setVisibility(View.GONE);
+        if (mAddTextDone.getVisibility() == View.VISIBLE) {
+            mAddTextDone.startAnimation(mAnimationExit);
+            mAddTextDone.setVisibility(View.GONE);
+        }
         mAddTextCancel.startAnimation(mAnimationExit);
         mAddTextCancel.setVisibility(View.GONE);
         mAddText.startAnimation(mAnimationExit);
@@ -889,6 +890,10 @@ public class EditorPage extends AppCompatActivity implements ChangePaintThicknes
             layout.removeView(textView);
             textViews.remove(textView);
         }
+        if (textViews.size() == 1) {
+            mAddTextDone.startAnimation(mAnimationEnter);
+            mAddTextDone.setVisibility(View.VISIBLE);
+        }
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
@@ -897,6 +902,10 @@ public class EditorPage extends AppCompatActivity implements ChangePaintThicknes
         if (deleted) {
             layout.removeView(textView);
             textViews.remove(textView);
+            if (textViews.size() == 0) {
+                mAddTextDone.startAnimation(mAnimationExit);
+                mAddTextDone.setVisibility(View.GONE);
+            }
         }
         textView.setText(text);
         textView.setTextSize(size);
