@@ -14,6 +14,7 @@ import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.transition.Fade;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Map;
@@ -109,6 +110,7 @@ public class FolderActivity extends AppCompatActivity {
         if (EditorPage.mWasSaved) {
             set();
             EditorPage.mWasSaved = false;
+            Toast.makeText(this, "here", Toast.LENGTH_SHORT).show();
         }
     }
 }

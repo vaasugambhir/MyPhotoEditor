@@ -18,7 +18,6 @@ import android.graphics.ColorMatrix;
 import android.graphics.ColorMatrixColorFilter;
 import android.graphics.RectF;
 import android.graphics.Typeface;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Build;
@@ -62,7 +61,7 @@ public class EditorPage extends AppCompatActivity implements ChangePaintThicknes
     private LinearLayout mBG;
     private boolean mCBMode = false;
     private boolean mTextAdded = false, mAddedTextMode = false;
-    public static boolean mSaved, mWasSaved;
+    public static boolean mSaved, mWasSaved=false;
     public static ArrayList<MyTextView> textViews;
     private Animation mAnimationEnter, mAnimationExit;
     private SeekBar mChangeBrightness, mChangeContrast;
@@ -79,7 +78,6 @@ public class EditorPage extends AppCompatActivity implements ChangePaintThicknes
         mAnimationEnter = AnimationUtils.loadAnimation(this, R.anim.bottom_to_top);
         mAnimationExit = AnimationUtils.loadAnimation(this, R.anim.top_to_bottom);
         mSaved = false;
-        mWasSaved = false;
 
         mCurrentBrightness = 127f;
         mCurrentContrast = 1f;
