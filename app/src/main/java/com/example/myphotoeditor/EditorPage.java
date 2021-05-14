@@ -66,6 +66,7 @@ public class EditorPage extends AppCompatActivity implements ChangePaintThicknes
     private Animation mAnimationEnter, mAnimationExit;
     private SeekBar mChangeBrightness, mChangeContrast;
     private float mCurrentBrightness, mCurrentContrast, mPrevBrightness, mPrevContrast;
+    private ViewPagerAdapter adapter;
 
     // OVERRIDDEN METHODS
     @SuppressLint("ClickableViewAccessibility")
@@ -158,7 +159,7 @@ public class EditorPage extends AppCompatActivity implements ChangePaintThicknes
     private void setMyViewPager() {
         mViewPager = findViewById(R.id.image_viewPager);
 
-        ViewPagerAdapter adapter = new ViewPagerAdapter(this);
+        adapter = new ViewPagerAdapter(this);
 
         mViewPager.setAdapter(adapter);
         mViewPager.setCurrentItem(ImageListActivity.position);
@@ -320,6 +321,8 @@ public class EditorPage extends AppCompatActivity implements ChangePaintThicknes
 
         mSaved = true;
         mWasSaved = true;
+
+        adapter.notifyDataSetChanged();
     }
 
     private void saveImage(Bitmap bitmap) {
