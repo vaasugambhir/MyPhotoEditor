@@ -337,6 +337,8 @@ public class EditorPage extends AppCompatActivity implements ChangePaintThicknes
         File image = new File(myDirectory, imageName);
         LoadedImages.allImages.add(0, image.getAbsolutePath());
         ArrayList<String> myFolder = LoadedImages.folderMap.remove(Constants.MY_DIRECTORY);
+        if (myFolder == null)
+            myFolder = new ArrayList<>();
         myFolder.add(0, image.getAbsolutePath());
         LoadedImages.folderMap.put(Constants.MY_DIRECTORY, myFolder);
 

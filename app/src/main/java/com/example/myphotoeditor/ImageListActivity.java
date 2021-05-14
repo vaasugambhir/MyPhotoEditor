@@ -31,7 +31,7 @@ public class ImageListActivity extends AppCompatActivity {
     private String mChosenFolder;
 
     public static int position = 0;
-    private static ArrayList<String> mFilePaths, mFileNames;
+    private static ArrayList<String> mFilePaths = new ArrayList<>(), mFileNames = new ArrayList<>();
 
     @RequiresApi(api = Build.VERSION_CODES.Q)
     @Override
@@ -153,6 +153,7 @@ public class ImageListActivity extends AppCompatActivity {
     }
 
     private void setAdapter() {
+        mFilePaths = new ArrayList<>();
         mAdapter = new ImageAdapter(this);
         if (mChosenFolder.equals(Constants.ALL_IMAGES)) {
             mFilePaths = LoadedImages.allImages;
