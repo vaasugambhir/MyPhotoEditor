@@ -20,10 +20,9 @@ import android.view.ViewTreeObserver;
 import android.widget.TextView;
 
 import java.util.ArrayList;
-import java.util.Map;
 import java.util.Objects;
 
-public class MainActivity extends AppCompatActivity {
+public class ImageListActivity extends AppCompatActivity {
 
     private TextView mImageFolder;
     private RecyclerView mImageList;
@@ -37,7 +36,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_image_list);
 
         Intent intent = getIntent();
         if (intent != null)
@@ -122,7 +121,6 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.Q)
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -134,6 +132,7 @@ public class MainActivity extends AppCompatActivity {
             if (EditorPage.mSaved) {
                 if (requestCode == Constants.REQUEST_CODE) {
                     fetchingData();
+                    mImageFolder.setText(Constants.MY_DIRECTORY);
                     mAdapter.add(mFilePaths, mFileNames);
                     mAdapter.notifyDataSetChanged();
                     mImageList.scrollToPosition(0);
@@ -143,11 +142,8 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.Q)
     private void fetchingData() {
-        Map<String, ArrayList<String>> map = ReadInternalImages.getImageAndAlbums(this);
-        mFilePaths = map.get(Constants.MY_DIRECTORY);
-        mImageFolder.setText(Constants.MY_DIRECTORY);
+        mFilePaths = LoadedImages.folderMap.get(Constants.MY_DIRECTORY);
         mFileNames = new ArrayList<>();
         for (String path : mFilePaths) {
             String name = path.substring(path.lastIndexOf('/') + 1);
@@ -158,7 +154,7 @@ public class MainActivity extends AppCompatActivity {
     private void setAdapter() {
         mAdapter = new ImageAdapter(this);
         if (mChosenFolder.equals(Constants.ALL_IMAGES)) {
-            mFilePaths = FolderActivity.getAllImages();
+            mFilePaths = LoadedImages.allImages;
         } else {
             mFilePaths = FolderActivity.getChosenImages();
         }
@@ -170,9 +166,9 @@ public class MainActivity extends AppCompatActivity {
         mAdapter.add(mFilePaths, mFileNames);
         mAdapter.addOnClickListener((image, path, name, pos) -> {
             position = pos;
-            Intent intent = new Intent(MainActivity.this, EditorPage.class);
+            Intent intent = new Intent(ImageListActivity.this, EditorPage.class);
             ActivityOptionsCompat optionsCompat = ActivityOptionsCompat
-                    .makeSceneTransitionAnimation(MainActivity.this,
+                    .makeSceneTransitionAnimation(ImageListActivity.this,
                             image, Objects.requireNonNull(ViewCompat.getTransitionName(image)));
             intent.putExtra(Constants.IMAGE_TRANSITION_NAME, ViewCompat.getTransitionName(image));
             intent.putExtra(Constants.IMAGE_PATH, path);

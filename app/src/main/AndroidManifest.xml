@@ -23,10 +23,10 @@
         </activity>
         <activity
             android:name=".EditorPage"
-            android:parentActivityName=".MainActivity"
+            android:parentActivityName=".ImageListActivity"
             android:theme="@style/Theme.MyPhotoEditor" />
         <activity
-            android:name=".MainActivity"
+            android:name=".ImageListActivity"
             android:theme="@style/Theme.Toolbar">
         </activity>
     </application>

@@ -89,7 +89,7 @@ public class EditorPage extends AppCompatActivity implements ChangePaintThicknes
 //        w.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
 //        w.getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
 
-        mFileNames = MainActivity.getFileNames();
+        mFileNames = ImageListActivity.getFileNames();
         mDefColor = ContextCompat.getColor(this, R.color.white);
 
         getWindow().getSharedElementEnterTransition().setDuration(Constants.TRANSITION_DURATION);
@@ -161,7 +161,7 @@ public class EditorPage extends AppCompatActivity implements ChangePaintThicknes
         ViewPagerAdapter adapter = new ViewPagerAdapter(this);
 
         mViewPager.setAdapter(adapter);
-        mViewPager.setCurrentItem(MainActivity.position);
+        mViewPager.setCurrentItem(ImageListActivity.position);
 
         if (getCurrentView() != null)
             mCurrentBitmap = Bitmap.createBitmap(getCurrentView().getImageBitmap());
@@ -181,7 +181,7 @@ public class EditorPage extends AppCompatActivity implements ChangePaintThicknes
             @Override
             public void onPageSelected(int position) {
                 mActionBar.setTitle(mFileNames.get(position));
-                MainActivity.position = position;
+                ImageListActivity.position = position;
                 MyImageView imageView = getCurrentView();
                 imageView.setScrolling(false);
             }
@@ -332,6 +332,10 @@ public class EditorPage extends AppCompatActivity implements ChangePaintThicknes
         String rev = stringBuilder.reverse().toString();
         String imageName = Constants.MY_DIRECTORY + "_" + System.currentTimeMillis() + "_" + rev + ".jpg";
         File image = new File(myDirectory, imageName);
+        LoadedImages.allImages.add(0, image.getAbsolutePath());
+        ArrayList<String> myFolder = LoadedImages.folderMap.remove(Constants.MY_DIRECTORY);
+        myFolder.add(0, image.getAbsolutePath());
+        LoadedImages.folderMap.put(Constants.MY_DIRECTORY, myFolder);
 
         try {
             FileOutputStream outputStream = new FileOutputStream(image);
@@ -587,7 +591,7 @@ public class EditorPage extends AppCompatActivity implements ChangePaintThicknes
 
     private MyImageView getCurrentView() {
         try {
-            return mViewPager.findViewWithTag(MainActivity.position);
+            return mViewPager.findViewWithTag(ImageListActivity.position);
         } catch (NullPointerException | IndexOutOfBoundsException exception) {
             return null;
         }

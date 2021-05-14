@@ -14,7 +14,6 @@ import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.transition.Fade;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Map;
@@ -22,11 +21,7 @@ import java.util.Map;
 public class FolderActivity extends AppCompatActivity {
 
     private static ArrayList<String> chosenImages;
-    private static ArrayList<String> allImages;
-
-    public static ArrayList<String> getAllImages() {
-        return allImages;
-    }
+    private FolderAdapter adapter;
 
     @RequiresApi(api = Build.VERSION_CODES.Q)
     @Override
@@ -44,14 +39,14 @@ public class FolderActivity extends AppCompatActivity {
     @RequiresApi(api = Build.VERSION_CODES.Q)
     private void set() {
         RecyclerView myList = findViewById(R.id.recyclerView_folder);
-        Map<String, ArrayList<String>> map = ReadInternalImages.getImageAndAlbums(this);
+        LoadedImages.folderMap = ReadInternalImages.getImageAndAlbums(this);
 
         ArrayList<String> folderNames = new ArrayList<>();
         ArrayList<String> imagePaths = new ArrayList<>();
         ArrayList<Integer> count = new ArrayList<>();
-        allImages = ReadInternalImages.getImageList(this);
+        LoadedImages.allImages = ReadInternalImages.getImageList(this);
 
-        for (Map.Entry<String, ArrayList<String>> entry : map.entrySet()) {
+        for (Map.Entry<String, ArrayList<String>> entry : LoadedImages.folderMap.entrySet()) {
             folderNames.add(entry.getKey());
             if (!entry.getValue().isEmpty()) {
                 imagePaths.add(entry.getValue().get(0));
@@ -63,13 +58,13 @@ public class FolderActivity extends AppCompatActivity {
         }
 
         folderNames.add(0, Constants.ALL_IMAGES);
-        imagePaths.add(0, allImages.get(0));
-        count.add(0, allImages.size());
+        imagePaths.add(0, LoadedImages.allImages.get(0));
+        count.add(0, LoadedImages.allImages.size());
 
-        FolderAdapter adapter = new FolderAdapter(this, (pos, textView) -> {
-            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+        adapter = new FolderAdapter(this, (pos, textView) -> {
+            Intent intent = new Intent(getApplicationContext(), ImageListActivity.class);
             intent.putExtra(Constants.CHOSEN_FOLDER, folderNames.get(pos));
-            chosenImages = map.get(folderNames.get(pos));
+            chosenImages = LoadedImages.folderMap.get(folderNames.get(pos));
             startActivityForResult(intent, 10101);
             overridePendingTransition(R.anim.fadein_special, R.anim.fadeout);
         });
@@ -108,9 +103,29 @@ public class FolderActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (EditorPage.mWasSaved) {
-            set();
+            LoadedImages.folderMap.remove(Constants.ALL_IMAGES);
+            ArrayList<String> folderNames = new ArrayList<>();
+            ArrayList<String> imagePaths = new ArrayList<>();
+            ArrayList<Integer> count = new ArrayList<>();
+
+            for (Map.Entry<String, ArrayList<String>> entry : LoadedImages.folderMap.entrySet()) {
+                folderNames.add(entry.getKey());
+                if (!entry.getValue().isEmpty()) {
+                    imagePaths.add(entry.getValue().get(0));
+                    count.add(entry.getValue().size());
+                } else {
+                    imagePaths.add("");
+                    count.add(0);
+                }
+            }
+
+            folderNames.add(0, Constants.ALL_IMAGES);
+            imagePaths.add(0, LoadedImages.allImages.get(0));
+            count.add(0, LoadedImages.allImages.size());
+
+            adapter.add(folderNames, imagePaths, count);
+
             EditorPage.mWasSaved = false;
-            Toast.makeText(this, "here", Toast.LENGTH_SHORT).show();
         }
     }
 }

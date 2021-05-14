@@ -30,7 +30,7 @@ public class ViewPagerAdapter extends PagerAdapter {
 
     ViewPagerAdapter(Context context) {
         mContext = context;
-        mFilePaths = MainActivity.getFilePaths();
+        mFilePaths = ImageListActivity.getFilePaths();
         myActivity = (Activity) mContext;
     }
 
