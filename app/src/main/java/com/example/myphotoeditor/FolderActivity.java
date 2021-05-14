@@ -103,29 +103,32 @@ public class FolderActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (EditorPage.mWasSaved) {
-            LoadedImages.folderMap.remove(Constants.ALL_IMAGES);
-            ArrayList<String> folderNames = new ArrayList<>();
-            ArrayList<String> imagePaths = new ArrayList<>();
-            ArrayList<Integer> count = new ArrayList<>();
-
-            for (Map.Entry<String, ArrayList<String>> entry : LoadedImages.folderMap.entrySet()) {
-                folderNames.add(entry.getKey());
-                if (!entry.getValue().isEmpty()) {
-                    imagePaths.add(entry.getValue().get(0));
-                    count.add(entry.getValue().size());
-                } else {
-                    imagePaths.add("");
-                    count.add(0);
-                }
-            }
-
-            folderNames.add(0, Constants.ALL_IMAGES);
-            imagePaths.add(0, LoadedImages.allImages.get(0));
-            count.add(0, LoadedImages.allImages.size());
-
-            adapter.add(folderNames, imagePaths, count);
-
+            update();
             EditorPage.mWasSaved = false;
         }
+    }
+
+    void update() {
+        LoadedImages.folderMap.remove(Constants.ALL_IMAGES);
+        ArrayList<String> folderNames = new ArrayList<>();
+        ArrayList<String> imagePaths = new ArrayList<>();
+        ArrayList<Integer> count = new ArrayList<>();
+
+        for (Map.Entry<String, ArrayList<String>> entry : LoadedImages.folderMap.entrySet()) {
+            folderNames.add(entry.getKey());
+            if (!entry.getValue().isEmpty()) {
+                imagePaths.add(entry.getValue().get(0));
+                count.add(entry.getValue().size());
+            } else {
+                imagePaths.add("");
+                count.add(0);
+            }
+        }
+
+        folderNames.add(0, Constants.ALL_IMAGES);
+        imagePaths.add(0, LoadedImages.allImages.get(0));
+        count.add(0, LoadedImages.allImages.size());
+
+        adapter.add(folderNames, imagePaths, count);
     }
 }
