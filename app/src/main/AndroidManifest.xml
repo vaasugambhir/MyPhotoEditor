@@ -14,6 +14,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true">
         <activity android:name=".FolderActivity"
+            android:theme="@style/Theme.Toolbar"/>
+        <activity
+            android:name=".SplashActivity"
             android:theme="@style/Theme.Toolbar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -27,8 +30,7 @@
             android:theme="@style/Theme.MyPhotoEditor" />
         <activity
             android:name=".ImageListActivity"
-            android:theme="@style/Theme.Toolbar">
-        </activity>
+            android:theme="@style/Theme.Toolbar" />
     </application>
 
 </manifest>
