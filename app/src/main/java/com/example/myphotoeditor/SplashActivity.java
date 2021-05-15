@@ -4,11 +4,8 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-
-import java.util.concurrent.Executors;
 
 public class SplashActivity extends AppCompatActivity {
 
@@ -19,8 +16,8 @@ public class SplashActivity extends AppCompatActivity {
         setContentView(R.layout.activity_splash);
 
         Thread loadPicsThread = new Thread(() -> {
-            LoadedImages.folderMap = ReadInternalImages.getImageAndAlbums(getApplicationContext());
-            LoadedImages.allImages = ReadInternalImages.getImageList(getApplicationContext());
+            LoadedImages.folderMap = ReadInternalImages.getImageAndAlbums(SplashActivity.this);
+            LoadedImages.allImages = ReadInternalImages.getImageList(SplashActivity.this);
             startActivity(new Intent(getApplicationContext(), FolderActivity.class));
             overridePendingTransition(R.anim.fadein, R.anim.fadeout_special);
             finish();

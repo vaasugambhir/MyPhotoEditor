@@ -22,6 +22,9 @@ public class FolderActivity extends AppCompatActivity {
 
     private static ArrayList<String> chosenImages;
     private FolderAdapter adapter;
+    private ArrayList<String> folderNames;
+    private ArrayList<String> imagePaths;
+    private ArrayList<Integer> count;
 
     @RequiresApi(api = Build.VERSION_CODES.Q)
     @Override
@@ -39,12 +42,10 @@ public class FolderActivity extends AppCompatActivity {
     @RequiresApi(api = Build.VERSION_CODES.Q)
     private void set() {
         RecyclerView myList = findViewById(R.id.recyclerView_folder);
-        LoadedImages.folderMap = ReadInternalImages.getImageAndAlbums(this);
 
-        ArrayList<String> folderNames = new ArrayList<>();
-        ArrayList<String> imagePaths = new ArrayList<>();
-        ArrayList<Integer> count = new ArrayList<>();
-        LoadedImages.allImages = ReadInternalImages.getImageList(this);
+        folderNames = new ArrayList<>();
+        imagePaths = new ArrayList<>();
+        count = new ArrayList<>();
 
         for (Map.Entry<String, ArrayList<String>> entry : LoadedImages.folderMap.entrySet()) {
             folderNames.add(entry.getKey());
@@ -110,9 +111,10 @@ public class FolderActivity extends AppCompatActivity {
 
     void update() {
         LoadedImages.folderMap.remove(Constants.ALL_IMAGES);
-        ArrayList<String> folderNames = new ArrayList<>();
-        ArrayList<String> imagePaths = new ArrayList<>();
-        ArrayList<Integer> count = new ArrayList<>();
+
+        folderNames = new ArrayList<>();
+        imagePaths = new ArrayList<>();
+        count = new ArrayList<>();
 
         for (Map.Entry<String, ArrayList<String>> entry : LoadedImages.folderMap.entrySet()) {
             folderNames.add(entry.getKey());
@@ -130,5 +132,6 @@ public class FolderActivity extends AppCompatActivity {
         count.add(0, LoadedImages.allImages.size());
 
         adapter.add(folderNames, imagePaths, count);
+        adapter.notifyDataSetChanged();
     }
 }
