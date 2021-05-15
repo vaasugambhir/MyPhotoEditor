@@ -46,10 +46,8 @@ public class ReadInternalImages {
             imageList.add(absolutePathOfImage);
             LoadedImages.imageCount++;
             if (LoadedImages.totalCount > 0) {
-                ((Activity) context).runOnUiThread(() -> {
-                    progressBar.setProgress((LoadedImages.imageCount*100)/LoadedImages.totalCount);
-                    System.out.println((LoadedImages.imageCount*100)/LoadedImages.totalCount);
-                });
+                progressBar.setProgress((LoadedImages.imageCount*100)/LoadedImages.totalCount);
+                //progressBar.post(() -> progressBar.setProgress((LoadedImages.imageCount*100)/LoadedImages.totalCount));
             }
         }
 
@@ -94,10 +92,7 @@ public class ReadInternalImages {
 
             LoadedImages.imageCount++;
             if (LoadedImages.totalCount > 0) {
-                ((Activity) context).runOnUiThread(() -> {
-                    progressBar.setProgress((LoadedImages.imageCount*100)/LoadedImages.totalCount);
-                    System.out.println((LoadedImages.imageCount*100)/LoadedImages.totalCount);
-                });
+                progressBar.setProgress((LoadedImages.imageCount*100)/LoadedImages.totalCount);
             }
         }
 

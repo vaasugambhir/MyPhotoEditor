@@ -288,6 +288,19 @@ public class EditorPage extends AppCompatActivity implements ChangePaintThicknes
         }
     }
 
+    private void getFinalImage(MyImageView currentView) {
+
+        if (currentView != null) {
+            RectF rect = currentView.getImageRect();
+            currentView.setDrawingCacheEnabled(true);
+            currentView.buildDrawingCache();
+            Bitmap bmp = Bitmap.createBitmap(currentView.getDrawingCache(), (int) rect.left, (int) rect.top, (int) rect.width(), (int) rect.height());
+            currentView.setDrawingCacheEnabled(false);
+            saveImage(bmp);
+        }
+    }
+
+
     @RequiresApi(api = Build.VERSION_CODES.Q)
     public void save(View view) {
 
@@ -300,17 +313,9 @@ public class EditorPage extends AppCompatActivity implements ChangePaintThicknes
         saveToast.setGravity(Gravity.CENTER, 0, 0);
 
         MyImageView currentView = getCurrentView();
-        if (currentView != null) {
+        new Thread(() -> getFinalImage(currentView)).start();
 
-            RectF rect = currentView.getImageRect();
-            currentView.setDrawingCacheEnabled(true);
-            currentView.buildDrawingCache();
-            Bitmap bmp = Bitmap.createBitmap(currentView.getDrawingCache(), (int) rect.left, (int) rect.top, (int) rect.width(), (int) rect.height());
-            currentView.setDrawingCacheEnabled(false);
-            currentView.setImageBitmap(bmp);
-            saveImage(bmp);
-            saveToast.show();
-        }
+        saveToast.show();
 
         exitEditMode();
 
