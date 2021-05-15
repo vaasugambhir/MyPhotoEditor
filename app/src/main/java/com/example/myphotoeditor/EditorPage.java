@@ -298,8 +298,8 @@ public class EditorPage extends AppCompatActivity implements ChangePaintThicknes
             Bitmap bmp = Bitmap.createBitmap(currentView.getDrawingCache(), (int) rect.left, (int) rect.top, (int) rect.width(), (int) rect.height());
             currentView.setDrawingCacheEnabled(false);
             saveImage(bmp);
-            currentView.setImageBitmap(mCurrentBitmap);
-            runOnUiThread(() -> {
+            currentView.post(() -> {
+                currentView.setImageBitmap(mCurrentBitmap);
                 dialog.dismiss();
                 adapter.notifyDataSetChanged();
                 toast.show();
