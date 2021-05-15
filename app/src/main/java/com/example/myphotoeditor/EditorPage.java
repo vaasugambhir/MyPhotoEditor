@@ -53,15 +53,14 @@ public class EditorPage extends AppCompatActivity implements ChangePaintThicknes
     private ConstraintLayout layout;
     private ArrayList<String> mFileNames;
     private MyViewPager mViewPager;
-    private Button mEdit, mPaint, mRotate, mChooseColor, mChooseThickness, mSave, mDone, mCancel, mCrop, mSetCrop, mCancelCrop, mUndo
-            ,mChangeBrightnessContrast, mDoneCB, mCancelCB, mAddTexts, mAddText, mAddTextDone, mAddTextCancel;
+    private Button mEdit, mPaint, mRotate, mChooseColor, mChooseThickness, mSave, mDone, mCancel, mCrop, mSetCrop, mCancelCrop, mUndo, mChangeBrightnessContrast, mDoneCB, mCancelCB, mAddTexts, mAddText, mAddTextDone, mAddTextCancel;
     private int mDefColor;
     private Bitmap mCurrentBitmap;
     private TextView mContrastTV, mBrightnessTV;
     private LinearLayout mBG;
     private boolean mCBMode = false;
     private boolean mTextAdded = false, mAddedTextMode = false;
-    public static boolean mSaved, mWasSaved=false;
+    public static boolean mSaved, mWasSaved = false;
     public static ArrayList<MyTextView> textViews;
     private Animation mAnimationEnter, mAnimationExit;
     private SeekBar mChangeBrightness, mChangeContrast;
@@ -124,7 +123,7 @@ public class EditorPage extends AppCompatActivity implements ChangePaintThicknes
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 MyImageView imageView = getCurrentView();
-                if (imageView!=null) {
+                if (imageView != null) {
                     mCurrentBrightness = progress;
                     imageView.setColorFilter(setContrastAndBrightness(mCurrentContrast, mCurrentBrightness));
                 }
@@ -143,8 +142,8 @@ public class EditorPage extends AppCompatActivity implements ChangePaintThicknes
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 MyImageView imageView = getCurrentView();
-                if (imageView!=null) {
-                    mCurrentContrast = progress/100f;
+                if (imageView != null) {
+                    mCurrentContrast = progress / 100f;
                     imageView.setColorFilter(setContrastAndBrightness(mCurrentContrast, mCurrentBrightness));
                 }
             }
@@ -207,14 +206,13 @@ public class EditorPage extends AppCompatActivity implements ChangePaintThicknes
                     layout.removeView(myTextView);
                 }
                 textViews.clear();
-            }
-            else if (imageView.getPaintMode()) {
+            } else if (imageView.getPaintMode()) {
                 exitPaintMode();
                 imageView.disablePaintMode();
             } else if (imageView.getCropMode()) {
                 exitCropMode();
                 imageView.disableCropMode();
-            } else if(mCBMode) {
+            } else if (mCBMode) {
                 imageView.setColorFilter(setContrastAndBrightness(mPrevContrast, mPrevBrightness));
                 exitContrastBrightnessChangeMode();
             } else if (imageView.getEditingMode()) {
@@ -305,6 +303,13 @@ public class EditorPage extends AppCompatActivity implements ChangePaintThicknes
                 dialog.dismiss();
                 adapter.notifyDataSetChanged();
                 toast.show();
+                exitEditMode();
+
+                currentView.disablePaintMode();
+                currentView.disableCropMode();
+
+                mSaved = true;
+                mWasSaved = true;
             });
         }
     }
@@ -325,15 +330,6 @@ public class EditorPage extends AppCompatActivity implements ChangePaintThicknes
         dialog.start();
         new Thread(() -> getFinalImage(currentView, saveToast)).start();
 
-        exitEditMode();
-
-        if (currentView != null)
-            currentView.disablePaintMode();
-        if (currentView != null)
-            currentView.disableCropMode();
-
-        mSaved = true;
-        mWasSaved = true;
 
     }
 
@@ -539,7 +535,7 @@ public class EditorPage extends AppCompatActivity implements ChangePaintThicknes
         MyImageView currentView = getCurrentView();
         if (currentView != null) {
             currentView.setCrop();
-            if (MyImageView.mHasBeenCropped || MyImageView.mHasBeenPainted || currentView.getRotationDegrees()%360!=0) {
+            if (MyImageView.mHasBeenCropped || MyImageView.mHasBeenPainted || currentView.getRotationDegrees() % 360 != 0) {
                 mSave.startAnimation(mAnimationEnter);
                 mSave.setVisibility(View.VISIBLE);
             }
@@ -552,7 +548,7 @@ public class EditorPage extends AppCompatActivity implements ChangePaintThicknes
         MyImageView currentView = getCurrentView();
         if (currentView != null) {
             currentView.cancelCrop();
-            if (MyImageView.mHasBeenCropped || MyImageView.mHasBeenPainted || currentView.getRotationDegrees()%360!=0) {
+            if (MyImageView.mHasBeenCropped || MyImageView.mHasBeenPainted || currentView.getRotationDegrees() % 360 != 0) {
                 mSave.startAnimation(mAnimationEnter);
                 mSave.setVisibility(View.VISIBLE);
             }
@@ -703,7 +699,7 @@ public class EditorPage extends AppCompatActivity implements ChangePaintThicknes
     public void changeThickness(View view) {
         vibrate();
         MyImageView imageView = getCurrentView();
-        if (imageView!=null) {
+        if (imageView != null) {
             ChangePaintThicknessDialog dialog = new ChangePaintThicknessDialog(mDefColor, imageView.getCurrentPaintThickness());
             dialog.show(getSupportFragmentManager(), "Change Thickness");
         }
@@ -780,7 +776,7 @@ public class EditorPage extends AppCompatActivity implements ChangePaintThicknes
 
     public void cancelCB(View view) {
         vibrate();
-        if (getCurrentView()!=null) {
+        if (getCurrentView() != null) {
             getCurrentView().setColorFilter(setContrastAndBrightness(mPrevContrast, mPrevBrightness));
         }
         exitContrastBrightnessChangeMode();
@@ -788,7 +784,7 @@ public class EditorPage extends AppCompatActivity implements ChangePaintThicknes
 
     public void changeBrightnessContrast(View view) {
         vibrate();
-        mChangeContrast.setProgress((int) (mPrevContrast*100));
+        mChangeContrast.setProgress((int) (mPrevContrast * 100));
         mChangeBrightness.setProgress((int) mPrevBrightness);
         enterContrastBrightnessChangeMode();
     }
@@ -797,10 +793,10 @@ public class EditorPage extends AppCompatActivity implements ChangePaintThicknes
         brightness -= 127;
         ColorMatrix cm = new ColorMatrix(new float[]
                 {
-                        contrast, 0       , 0       , 0, brightness,
-                        0       , contrast, 0       , 0, brightness,
-                        0       , 0       , contrast, 0, brightness,
-                        0       , 0       , 0       , 1,          0
+                        contrast, 0, 0, 0, brightness,
+                        0, contrast, 0, 0, brightness,
+                        0, 0, contrast, 0, brightness,
+                        0, 0, 0, 1, 0
                 });
 
         return new ColorMatrixColorFilter(cm);
