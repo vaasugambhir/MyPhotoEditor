@@ -67,6 +67,7 @@ public class EditorPage extends AppCompatActivity implements ChangePaintThicknes
     private SeekBar mChangeBrightness, mChangeContrast;
     private float mCurrentBrightness, mCurrentContrast, mPrevBrightness, mPrevContrast;
     private ViewPagerAdapter adapter;
+    private SavingDialog dialog;
 
     // OVERRIDDEN METHODS
     @SuppressLint("ClickableViewAccessibility")
@@ -75,6 +76,8 @@ public class EditorPage extends AppCompatActivity implements ChangePaintThicknes
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_editor_page);
         supportPostponeEnterTransition();
+
+        dialog = new SavingDialog(this);
 
         mAnimationEnter = AnimationUtils.loadAnimation(this, R.anim.bottom_to_top);
         mAnimationExit = AnimationUtils.loadAnimation(this, R.anim.top_to_bottom);
@@ -288,7 +291,7 @@ public class EditorPage extends AppCompatActivity implements ChangePaintThicknes
         }
     }
 
-    private void getFinalImage(MyImageView currentView) {
+    private void getFinalImage(MyImageView currentView, Toast toast) {
 
         if (currentView != null) {
             RectF rect = currentView.getImageRect();
@@ -297,6 +300,12 @@ public class EditorPage extends AppCompatActivity implements ChangePaintThicknes
             Bitmap bmp = Bitmap.createBitmap(currentView.getDrawingCache(), (int) rect.left, (int) rect.top, (int) rect.width(), (int) rect.height());
             currentView.setDrawingCacheEnabled(false);
             saveImage(bmp);
+            currentView.setImageBitmap(mCurrentBitmap);
+            runOnUiThread(() -> {
+                dialog.dismiss();
+                adapter.notifyDataSetChanged();
+                toast.show();
+            });
         }
     }
 
@@ -307,15 +316,14 @@ public class EditorPage extends AppCompatActivity implements ChangePaintThicknes
         vibrate();
 
         String saved = "Image saved in Gallery";
-        Toast saveToast = Toast.makeText(this, saved, Toast.LENGTH_SHORT);
+        @SuppressLint("ShowToast") Toast saveToast = Toast.makeText(this, saved, Toast.LENGTH_SHORT);
         saveToast.setText(saved);
         saveToast.setDuration(Toast.LENGTH_SHORT);
         saveToast.setGravity(Gravity.CENTER, 0, 0);
 
         MyImageView currentView = getCurrentView();
-        new Thread(() -> getFinalImage(currentView)).start();
-
-        saveToast.show();
+        dialog.start();
+        new Thread(() -> getFinalImage(currentView, saveToast)).start();
 
         exitEditMode();
 
@@ -327,7 +335,6 @@ public class EditorPage extends AppCompatActivity implements ChangePaintThicknes
         mSaved = true;
         mWasSaved = true;
 
-        adapter.notifyDataSetChanged();
     }
 
     private void saveImage(Bitmap bitmap) {
@@ -669,7 +676,6 @@ public class EditorPage extends AppCompatActivity implements ChangePaintThicknes
         if (currentImage != null) {
             currentImage.setColorFilter(setContrastAndBrightness(1, 127));
             currentImage.setRotation(0);
-            currentImage.setImageBitmap(mCurrentBitmap);
             currentImage.setEditingMode(false);
             mViewPager.disableScroll(false);
         }
