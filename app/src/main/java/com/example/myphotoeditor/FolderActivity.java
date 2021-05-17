@@ -39,6 +39,12 @@ public class FolderActivity extends AppCompatActivity {
         permissions();
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        LoadedImages.imageCount = 0;
+    }
+
     @RequiresApi(api = Build.VERSION_CODES.Q)
     private void set() {
         RecyclerView myList = findViewById(R.id.recyclerView_folder);

@@ -17,9 +17,13 @@ import java.util.Map;
 import java.util.TreeMap;
 
 public class ReadInternalImages {
+
+    private static ArrayList<String> allImages = new ArrayList<>();
+
     @SuppressLint("Recycle")
     @RequiresApi(api = Build.VERSION_CODES.Q)
     public static ArrayList<String> getImageList(Context context) {
+        /*
         ArrayList<String> imageList = new ArrayList<>();
 
         Uri uri;
@@ -51,7 +55,8 @@ public class ReadInternalImages {
             }
         }
 
-        return imageList;
+         */
+        return allImages;
     }
 
     @SuppressLint("Recycle")
@@ -69,7 +74,7 @@ public class ReadInternalImages {
         String orderBy = MediaStore.Images.Media.DATE_ADDED;
         cursor = context.getContentResolver().query(uri, projection, null, null, orderBy + " DESC");
         assert cursor != null;
-        LoadedImages.totalCount = cursor.getCount() * 2;
+        LoadedImages.totalCount = cursor.getCount();
         ProgressBar progressBar = ((Activity) context).findViewById(R.id.load_progress);
         progressBar.setMin(0);
         progressBar.setMax(100);
@@ -86,8 +91,10 @@ public class ReadInternalImages {
             }
             absolutePathOfImage = cursor.getString(column_index_data);
             File file = new File(absolutePathOfImage);
-            if (file.exists())
+            if (file.exists()) {
                 imageList.add(absolutePathOfImage);
+                allImages.add(absolutePathOfImage);
+            }
             map.put(folderName, imageList);
 
             LoadedImages.imageCount++;
