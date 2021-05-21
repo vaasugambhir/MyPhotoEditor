@@ -15,11 +15,11 @@
         android:supportsRtl="true">
         <activity android:name=".FolderActivity"
             android:theme="@style/Theme.Toolbar"
-            android:screenOrientation="fullSensor"/>
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".SplashActivity"
             android:theme="@style/Theme.Toolbar"
-            android:screenOrientation="fullSensor">
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -30,11 +30,11 @@
             android:name=".EditorPage"
             android:parentActivityName=".ImageListActivity"
             android:theme="@style/Theme.MyPhotoEditor"
-            android:screenOrientation="fullSensor"/>
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".ImageListActivity"
             android:theme="@style/Theme.Toolbar"
-            android:screenOrientation="fullSensor"/>
+            android:screenOrientation="portrait"/>
     </application>
 
 </manifest>
